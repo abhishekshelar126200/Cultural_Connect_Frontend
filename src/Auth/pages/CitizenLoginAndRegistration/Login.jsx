@@ -165,65 +165,6 @@ function Login() {
             [e.target.name]: e.target.value
         });
     };
-<<<<<<< HEAD
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setError("");
-    //     setLoading(true);
-
-    //     try {
-    //         // ✅ Replace with real login API call later
-    //         if (formData.email && formData.password) {
-    //             const token = await loginCitizen(formData);
-    //             console.log("Login successful! Token:", token);
-    //             setTimeout(() => {
-    //                 setLoading(false);
-    //                 localStorage.setItem("jwtToken", token.data.token);
-    //                 navigate("/citizen/dashboard");
-    //             }, 1200);
-    //         } else {
-    //             throw new Error();
-    //         }
-    //     } catch (err) {
-    //         setLoading(false);
-    //         setError("Invalid email or password");
-    //     }
-    // };
-    const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-        if (formData.email && formData.password) {
-
-            const response = await loginCitizen(formData);
-
-            const token = response.data.token;
-
-            // ✅ store token
-            localStorage.setItem("jwtToken", token);
-
-            // ✅ decode JWT
-            const payload = JSON.parse(atob(token.split('.')[1]));
-
-            const role = payload.role;   // ✅ IMPORTANT
-
-            console.log("User Role:", role);
-
-            // ✅ redirect based on role
-            if (role === "ADMIN") {
-                navigate("/admin/dashboard");
-            } else if (role === "OFFICER") {
-                navigate("/officer/dashboard");
-            } else if (role === "MANAGER") {
-                navigate("/manager/dashboard");
-            } else if (role === "COMPLIANCE") {
-                navigate("/compliance/dashboard");
-            } else if (role === "AUDITOR") {
-                navigate("/auditor/dashboard");
-=======
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -263,21 +204,14 @@ function Login() {
 
                 setLoading(false);
 
->>>>>>> d86acf437eda569737b748faf2d6e87e58b58760
             } else {
-                navigate("/citizen/dashboard");  // default
+                throw new Error();
             }
-
+        } catch (err) {
             setLoading(false);
-
-        } else {
-            throw new Error();
+            setError("Invalid email or password");
         }
-    } catch (err) {
-        setLoading(false);
-        setError("Invalid email or password");
-    }
-};
+    };
 
     return (
         <div className="container my-5">
@@ -365,5 +299,3 @@ function Login() {
 }
 
 export default Login;
-
-
