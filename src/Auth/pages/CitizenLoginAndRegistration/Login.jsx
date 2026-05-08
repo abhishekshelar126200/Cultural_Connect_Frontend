@@ -18,29 +18,76 @@ function Login() {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setLoading(true);
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     setError("");
+    //     setLoading(true);
 
-        try {
-            // ✅ Replace with real login API call later
-            if (formData.email && formData.password) {
-                const token = await loginCitizen(formData);
-                console.log("Login successful! Token:", token);
-                setTimeout(() => {
-                    setLoading(false);
-                    localStorage.setItem("jwtToken", token.data.token);
-                    navigate("/citizen/dashboard");
-                }, 1200);
+    //     try {
+    //         // ✅ Replace with real login API call later
+    //         if (formData.email && formData.password) {
+    //             const token = await loginCitizen(formData);
+    //             console.log("Login successful! Token:", token);
+    //             setTimeout(() => {
+    //                 setLoading(false);
+    //                 localStorage.setItem("jwtToken", token.data.token);
+    //                 navigate("/citizen/dashboard");
+    //             }, 1200);
+    //         } else {
+    //             throw new Error();
+    //         }
+    //     } catch (err) {
+    //         setLoading(false);
+    //         setError("Invalid email or password");
+    //     }
+    // };
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+        if (formData.email && formData.password) {
+
+            const response = await loginCitizen(formData);
+
+            const token = response.data.token;
+
+            // ✅ store token
+            localStorage.setItem("jwtToken", token);
+
+            // ✅ decode JWT
+            const payload = JSON.parse(atob(token.split('.')[1]));
+
+            const role = payload.role;   // ✅ IMPORTANT
+
+            console.log("User Role:", role);
+
+            // ✅ redirect based on role
+            if (role === "ADMIN") {
+                navigate("/admin/dashboard");
+            } else if (role === "OFFICER") {
+                navigate("/officer/dashboard");
+            } else if (role === "MANAGER") {
+                navigate("/manager/dashboard");
+            } else if (role === "COMPLIANCE") {
+                navigate("/compliance/dashboard");
+            } else if (role === "AUDITOR") {
+                navigate("/auditor/dashboard");
             } else {
-                throw new Error();
+                navigate("/citizen/dashboard");  // default
             }
-        } catch (err) {
+
             setLoading(false);
-            setError("Invalid email or password");
+
+        } else {
+            throw new Error();
         }
-    };
+    } catch (err) {
+        setLoading(false);
+        setError("Invalid email or password");
+    }
+};
 
     return (
         <div className="container my-5">
