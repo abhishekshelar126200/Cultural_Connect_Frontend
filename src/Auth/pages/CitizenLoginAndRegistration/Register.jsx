@@ -38,7 +38,7 @@ function Register() {
 
             // ✅ Redirect to Login after 2 seconds
             setTimeout(() => {
-                navigate("/citizen/login");
+                navigate("/login");
             }, 2000);
 
         } catch (err) {
