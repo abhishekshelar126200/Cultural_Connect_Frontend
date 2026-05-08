@@ -27,8 +27,10 @@ function Login() {
             // ✅ Replace with real login API call later
             if (formData.email && formData.password) {
                 const token = await loginCitizen(formData);
+                console.log("Login successful! Token:", token);
                 setTimeout(() => {
                     setLoading(false);
+                    localStorage.setItem("jwtToken", token.data.token);
                     navigate("/citizen/dashboard");
                 }, 1200);
             } else {
