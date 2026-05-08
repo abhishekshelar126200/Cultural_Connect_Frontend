@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "../CommonComponents/Navbar";
 import Sidebar from "../CitizenManagement/components/Sidebar";
 
-function CitizenRoutes() {
+function ComplianceAndAuditRoutes() {
     return (
         <div className="min-vh-100 d-flex flex-column">
 
@@ -12,7 +12,7 @@ function CitizenRoutes() {
 
             {/* Content Area */}
             <div className="d-flex flex-grow-1">
-                <Sidebar />
+                {/* <Sidebar /> */}
 
                 <main className="flex-grow-1 bg-light">
                     <div className="container py-4">
@@ -26,4 +26,4 @@ function CitizenRoutes() {
     );
 }
 
-export default CitizenRoutes;
+export default ComplianceAndAuditRoutes;
