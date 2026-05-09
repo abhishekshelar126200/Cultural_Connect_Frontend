@@ -21,6 +21,10 @@ import ProgramManagerDashboard from './ProgramManagement/pages/ProgramManagerDas
 import AuditorRoutes from './Routes/AuditorRoutes';
 import AuditorDashboard from './ComplianceAndAudit/pages/AuditorDashboard';
 import HomePageRoutes from './Routes/HomePageRoutes';
+import HeritageDashboard from './ProgramManagement/pages/HeritageDashboard';
+import CreateHeritageSite from './ProgramManagement/pages/CreateHeritageSite';
+import HeritageSiteDetails from './ProgramManagement/pages/HeritageSiteDetails';
+
 function App() {
   return <>
     <Routes>
@@ -58,6 +62,10 @@ function App() {
 
       <Route path="/culturalofficer" element={<CulturalOfficerRoutes />}>
         <Route path="dashboard" element={<CulturalOfficerDashboard />} />
+        <Route path="heritage" element={<HeritageDashboard />} />
+        <Route path="createHeritageSite" element={<CreateHeritageSite />} />
+        <Route path="heritageSiteDetails/:siteId" element={<HeritageSiteDetails />} />
+
 
         {/* <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />

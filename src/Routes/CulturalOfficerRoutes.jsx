@@ -1,8 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../CommonComponents/Navbar";
-import Sidebar from "../CitizenManagement/components/Sidebar";
-
+import Sidebar from "../ProgramManagement/components/Sidebar";
 function CulturalOfficerRoutes() {
     return (
         <div className="min-vh-100 d-flex flex-column">
@@ -12,7 +11,7 @@ function CulturalOfficerRoutes() {
 
             {/* Content Area */}
             <div className="d-flex flex-grow-1">
-                {/* <Sidebar /> */}
+                <Sidebar />
 
                 <main className="flex-grow-1 bg-light">
                     <div className="container py-4">
