@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllHeritageSites } from "../Heritage.api";
-import HeritageSiteList from "../components/HeritageSiteList";
+import { getAllHeritageSites } from "../../ProgramManagement/Heritage.api";
+import HeritageSiteList from "../component/HeritageSiteList";
 
 export default function HeritageDashboard() {
     const [sites, setSites] = useState([]);

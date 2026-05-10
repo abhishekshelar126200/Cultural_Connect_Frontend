@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getHeritageSiteById } from "../Heritage.api";
+import { getHeritageSiteById } from "../../ProgramManagement/Heritage.api";
 import {
     getActivitiesBySite,
     addPreservationActivity
-} from "../PreservationActivities.api";
+} from "../../ProgramManagement/PreservationActivities.api";
 
 export default function HeritageSiteDetails() {
     const { siteId } = useParams();
@@ -99,8 +99,8 @@ export default function HeritageSiteDetails() {
 
                     <span
                         className={`badge fs-6 ${site.status === "Active"
-                                ? "bg-success"
-                                : "bg-secondary"
+                            ? "bg-success"
+                            : "bg-secondary"
                             }`}
                     >
                         {site.status}

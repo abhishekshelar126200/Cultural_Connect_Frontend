@@ -47,12 +47,6 @@ function Sidebar() {
                 </li> */}
 
             </ul>
-
-            <div className="mt-auto">
-                <button className="btn btn-outline-light btn-sm w-100">
-                    Logout
-                </button>
-            </div>
         </div>
     );
 }
