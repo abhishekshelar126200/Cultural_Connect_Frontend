@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAllHeritageSites } from "../../ProgramManagement/Heritage.api";
+import { getAllHeritageSites } from "../Heritage.api";
 import HeritageSiteList from "../component/HeritageSiteList";
-
+import { deleteHeritageSite } from "../Heritage.api";
 export default function HeritageDashboard() {
     const [sites, setSites] = useState([]);
 
@@ -10,6 +10,20 @@ export default function HeritageDashboard() {
         const res = await getAllHeritageSites();
         console.log("Fetched Heritage Sites:", res.data);
         setSites(res.data);
+    };
+
+    const handleDeleteSite = async (siteId) => {
+        try {
+            await deleteHeritageSite(siteId);
+
+            // ✅ remove from UI
+            setSites(prev =>
+                prev.filter(site => site.siteId !== siteId)
+            );
+
+        } catch (err) {
+            alert("Failed to delete heritage site");
+        }
     };
 
     useEffect(() => {
@@ -35,7 +49,7 @@ export default function HeritageDashboard() {
             </div>
 
             {/* 🔹 Sites Grid */}
-            <HeritageSiteList sites={sites} />
+            <HeritageSiteList sites={sites} onDelete={handleDeleteSite} />
         </div>
     );
 }

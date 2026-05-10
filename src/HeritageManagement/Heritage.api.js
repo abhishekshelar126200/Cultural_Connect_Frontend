@@ -12,3 +12,5 @@ export const uploadImage = (siteId, imageFile) =>
 export const getHeritageSiteById = (siteId) =>
     httpHeritageClient.get(`/getSitebyId/${siteId}`);
 
+export const deleteHeritageSite = (siteId) =>
+    httpHeritageClient.delete(`/deleteSite/${siteId}`);

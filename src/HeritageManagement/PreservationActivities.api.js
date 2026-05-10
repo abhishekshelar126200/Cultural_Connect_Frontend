@@ -4,3 +4,6 @@ export const getActivitiesBySite = (siteId) =>
 
 export const addPreservationActivity = (activityData) =>
     httpPreservationClient.post("/addActivity", activityData);
+
+export const deletePreservationActivity = (activityId) =>
+    httpPreservationClient.delete(`/deleteActivity/${activityId}`);

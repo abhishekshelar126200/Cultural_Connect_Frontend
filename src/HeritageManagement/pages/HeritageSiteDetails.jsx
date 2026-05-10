@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { getHeritageSiteById } from "../../ProgramManagement/Heritage.api";
+import { getHeritageSiteById } from "../Heritage.api";
 import {
     getActivitiesBySite,
-    addPreservationActivity
-} from "../../ProgramManagement/PreservationActivities.api";
+    addPreservationActivity,
+    deletePreservationActivity
+} from "../PreservationActivities.api";
 
 export default function HeritageSiteDetails() {
     const { siteId } = useParams();
+    const closeBtnRef = useRef(null); // To close modal programmatically
 
     const [site, setSite] = useState(null);
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
 
     const [activityData, setActivityData] = useState({
         description: "",
@@ -20,8 +23,6 @@ export default function HeritageSiteDetails() {
     });
 
     const IMAGE_BASE_URL = "http://localhost:8086/uploads/";
-
-    // ✅ READ officerId FROM LOCAL STORAGE
     const officerId = localStorage.getItem("userId");
 
     useEffect(() => {
@@ -51,187 +52,164 @@ export default function HeritageSiteDetails() {
     };
 
     const handleAddActivity = async () => {
-        const payload = {
-            ...activityData,
-            siteId: siteId,
-            officerId: Number(officerId) // ✅ AUTO-INJECT officerId
-        };
+        if (!activityData.description || !activityData.date) {
+            alert("Please fill in all fields");
+            return;
+        }
 
-        await addPreservationActivity(payload);
+        setSubmitting(true);
+        try {
+            const payload = {
+                ...activityData,
+                siteId: Number(siteId), // Ensure it's a number
+                officerId: Number(officerId)
+            };
 
-        setActivityData({
-            description: "",
-            date: "",
-            status: "ONGOING"
-        });
+            await addPreservationActivity(payload);
 
-        const refreshed = await getActivitiesBySite(siteId);
-        setActivities(refreshed.data);
+            // Reset form
+            setActivityData({ description: "", date: "", status: "ONGOING" });
+
+            // Refresh list
+            const refreshed = await getActivitiesBySite(siteId);
+            setActivities(refreshed.data);
+
+            // Close Modal via Ref
+            if (closeBtnRef.current) closeBtnRef.current.click();
+        } catch (err) {
+            alert("Error adding activity");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
-    if (loading) {
-        return (
-            <div className="text-center my-5">
-                <h5>Loading heritage details...</h5>
-            </div>
-        );
-    }
+    const handleDeleteActivity = async (activityId) => {
+        if (!window.confirm("Are you sure you want to delete this activity?")) return;
 
-    if (!site) {
-        return (
-            <div className="text-center my-5 text-danger">
-                Heritage site not found
-            </div>
-        );
-    }
+        try {
+            await deletePreservationActivity(activityId);
+            setActivities(prev => prev.filter(act => act.activityId !== activityId));
+        } catch (err) {
+            alert("Failed to delete activity");
+        }
+    };
+
+    if (loading) return <div className="text-center my-5"><h5>Loading...</h5></div>;
+    if (!site) return <div className="text-center my-5 text-danger">Site not found</div>;
 
     return (
         <div className="container my-5">
-
-            {/* 🔹 TOP SECTION */}
-            <div className="row align-items-start mb-4">
-
-                {/* LEFT: SITE INFO */}
-                <div className="col-md-6">
-                    <h2 className="fw-bold">{site.name}</h2>
+            {/* SITE HEADER */}
+            <div className="row mb-5 align-items-center">
+                <div className="col-md-7">
+                    <h2 className="fw-bold text-primary">{site.name}</h2>
                     <p className="text-muted fs-5">📍 {site.location}</p>
-                    <p>{site.description}</p>
-
-                    <span
-                        className={`badge fs-6 ${site.status === "Active"
-                            ? "bg-success"
-                            : "bg-secondary"
-                            }`}
-                    >
+                    <p className="lead">{site.description}</p>
+                    <span className={`badge ${site.status === 'Active' ? 'bg-success' : 'bg-warning'}`}>
                         {site.status}
                     </span>
                 </div>
-
-                {/* RIGHT: SITE IMAGE */}
-                <div className="col-md-6 text-end">
+                <div className="col-md-5">
                     {site.fileUri && (
                         <img
                             src={`${IMAGE_BASE_URL}${site.fileUri}`}
                             alt={site.name}
-                            className="img-fluid rounded shadow"
-                            style={{ maxHeight: "300px", objectFit: "cover" }}
+                            className="img-fluid rounded shadow-lg"
+                            style={{ width: "100%", maxHeight: "350px", objectFit: "cover" }}
                         />
                     )}
                 </div>
             </div>
 
-            {/* 🔹 ACTIVITIES HEADER */}
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4 className="fw-bold">Preservation Activities</h4>
+            <hr />
 
-                <button
-                    className="btn btn-primary"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addActivityModal"
-                >
+            {/* ACTIVITIES SECTION */}
+            <div className="d-flex justify-content-between align-items-center mb-4 mt-4">
+                <h4 className="fw-bold">Preservation Timeline</h4>
+                <button className="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#addActivityModal">
                     ➕ Add Activity
                 </button>
             </div>
 
-            {/* 🔹 ACTIVITIES LIST */}
-            <div className="card shadow-sm">
-                <div className="card-body">
-
-                    {activities.length === 0 && (
-                        <p className="text-muted">
-                            No preservation activities available.
-                        </p>
+            <div className="row">
+                <div className="col-12">
+                    {activities.length === 0 ? (
+                        <div className="alert alert-light border text-center">No activities recorded yet.</div>
+                    ) : (
+                        activities.map(activity => (
+                            <div key={activity.activityId} className="card mb-3 border-start border-primary border-4 shadow-sm">
+                                <div className="card-body d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 className="fw-bold mb-1">{activity.description}</h6>
+                                        <span className="text-muted small">
+                                            📅 {activity.date} | Status: <strong>{activity.status}</strong>
+                                        </span>
+                                    </div>
+                                    <button
+                                        className="btn btn-outline-danger btn-sm border-0"
+                                        onClick={() => handleDeleteActivity(activity.activityId)}
+                                    >
+                                        🗑 Delete
+                                    </button>
+                                </div>
+                            </div>
+                        ))
                     )}
-
-                    {activities.map(activity => (
-                        <div
-                            key={activity.activityId}
-                            className="border rounded p-3 mb-3"
-                        >
-                            <p className="mb-1">{activity.description}</p>
-
-                            <small className="text-muted">
-                                Date: <strong>{activity.date}</strong> |
-                                Status: <strong>{activity.status}</strong>
-                            </small>
-                        </div>
-                    ))}
-
                 </div>
             </div>
 
-            {/* ✅ ADD ACTIVITY MODAL */}
-            <div
-                className="modal fade"
-                id="addActivityModal"
-                tabIndex="-1"
-                aria-hidden="true"
-            >
-                <div className="modal-dialog modal-lg">
+            {/* ADD ACTIVITY MODAL */}
+            <div className="modal fade" id="addActivityModal" tabIndex="-1" aria-hidden="true">
+                <div className="modal-dialog">
                     <div className="modal-content">
-
                         <div className="modal-header">
-                            <h5 className="modal-title">Add Preservation Activity</h5>
-                            <button
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                            />
+                            <h5 className="modal-title">Record Preservation Activity</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" ref={closeBtnRef}></button>
                         </div>
-
                         <div className="modal-body">
-
-                            <textarea
-                                className="form-control mb-3"
-                                name="description"
-                                placeholder="Activity Description"
-                                value={activityData.description}
-                                onChange={handleActivityChange}
-                                required
-                            />
-
-                            <input
-                                type="date"
-                                className="form-control mb-3"
-                                name="date"
-                                value={activityData.date}
-                                onChange={handleActivityChange}
-                                required
-                            />
-
-                            <select
-                                className="form-select"
-                                name="status"
-                                value={activityData.status}
-                                onChange={handleActivityChange}
-                            >
-                                <option value="ONGOING">ONGOING</option>
-                                <option value="COMPLETED">COMPLETED</option>
-                                <option value="PLANNED">PLANNED</option>
-                            </select>
-
+                            <div className="mb-3">
+                                <label className="form-label">Activity Description</label>
+                                <textarea
+                                    name="description"
+                                    className="form-control"
+                                    value={activityData.description}
+                                    onChange={handleActivityChange}
+                                    rows="3"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Date of Activity</label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    className="form-control"
+                                    value={activityData.date}
+                                    onChange={handleActivityChange}
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Current Status</label>
+                                <select name="status" className="form-select" value={activityData.status} onChange={handleActivityChange}>
+                                    <option value="ONGOING">Ongoing</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="PLANNED">Planned</option>
+                                </select>
+                            </div>
                         </div>
-
                         <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button
-                                className="btn btn-secondary"
-                                data-bs-dismiss="modal"
-                            >
-                                Cancel
-                            </button>
-
-                            <button
+                                type="button"
                                 className="btn btn-primary"
-                                data-bs-dismiss="modal"
                                 onClick={handleAddActivity}
+                                disabled={submitting}
                             >
-                                Save Activity
+                                {submitting ? "Saving..." : "Save Activity"}
                             </button>
                         </div>
-
                     </div>
                 </div>
             </div>
-
         </div>
     );
 }

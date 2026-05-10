@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { uploadImage, createHeritageSite } from "../../ProgramManagement/Heritage.api";
+import { uploadImage, createHeritageSite } from "../Heritage.api";
 // import { v4 as uuidv4 } from "uuid";
 
 export default function CreateHeritageSite() {
