@@ -184,11 +184,14 @@ function Login() {
                 // ✅ decode JWT
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 const userId = payload.userId;   // ✅ IMPORTANT
+                const username = payload.userName;
                 localStorage.setItem("userId", userId); // ✅ Store userId for later use
+                localStorage.setItem("username", username); // ✅ Store username for later use  
                 const role = payload.role;   // ✅ IMPORTANT
 
                 console.log("User Role:", role);
                 console.log("User ID:", userId);
+                console.log("Username:", username);
 
                 // ✅ redirect based on role
                 if (role === "ADMIN") {
