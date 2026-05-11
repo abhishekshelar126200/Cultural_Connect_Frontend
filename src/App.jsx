@@ -31,6 +31,8 @@ import CreateEvent from './EventAndResourceManagement/pages/CreateEvent';
 import EventDashboard from './EventAndResourceManagement/pages/EventDashboard';
 import ResourceDashboard from './EventAndResourceManagement/pages/ResourceDashboard';
 import CreateResource from './EventAndResourceManagement/pages/CreateResource';
+import EditEvent from './EventAndResourceManagement/pages/EditEvent';
+import EditResource from './EventAndResourceManagement/pages/EditResource';
 
 function App() {
   return <>
@@ -97,6 +99,12 @@ function App() {
     {/* Make sure these match the Links in your EventList */}
     <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
     <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+    <Route path="/programmanager" element={<ProgramManagerRoutes />}>
+    {/* ... other routes ... */}
+    
+    <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
+    <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
+</Route>
 </Route>
 
       <Route path="/auditor" element={<AuditorRoutes />}>

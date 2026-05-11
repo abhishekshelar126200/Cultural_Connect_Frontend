@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-// Fixed imports: ensure deleteEvent is imported correctly
 import { deleteEvent, getEventsByProgramId } from "../Event.api";
 import EventList from "../components/EventList";
-
+    
 export default function EventDashboard() {
     const [events, setEvents] = useState([]);
     const { programId } = useParams();
@@ -11,8 +10,7 @@ export default function EventDashboard() {
     const loadEvents = async () => {
         try {
             const res = await getEventsByProgramId(programId);
-            console.log("Fetched Events:", res.data);
-            setEvents(res.data); 
+            setEvents(res.data || []); 
         } catch (err) {
             console.error("Failed to fetch events", err);
         }
@@ -23,11 +21,7 @@ export default function EventDashboard() {
 
         try {
             await deleteEvent(eventId);
-
-            // ✅ remove from UI
-            setEvents(prev =>
-                prev.filter(event => event.eventId !== eventId)
-            );
+            setEvents(prev => prev.filter(event => event.eventId !== eventId));
         } catch (err) {
             alert("Failed to delete event");
         }
@@ -35,32 +29,31 @@ export default function EventDashboard() {
 
     useEffect(() => {
         loadEvents();
-    }, [programId]); // Added programId to dependencies
+    }, [programId]);
 
     return (
         <div className="container my-4">
-
-            {/* 🔹 Header Row */}
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3 className="fw-bold text-primary mb-0">
-                    Events {/* Updated from "Heritage Sites" */}
-                </h3>
+                <h3 className="fw-bold text-primary mb-0">Program Events</h3>
 
-                {/* ✅ Add Event Button */}
+                {/* ✅ FIXED: Corrected template literal for programId */}
                 <Link
-                    to="/programmanager/createEvent/${}"
+                    to={`/programmanager/createEvent/${programId}`}
                     className="btn btn-primary"
                 >
                     ➕ Add Event
                 </Link>
             </div>
 
-            {/* 🔹 Events Grid */}
-            {/* Fixed: Passed handleDeleteEvent instead of handleDeleteSite */}
-            <EventList events={events} onDelete={handleDeleteEvent} />
+            {/* ✅ FIXED: Pass programId so the Edit buttons can build their URLs */}
+            <EventList 
+                events={events} 
+                programId={programId} 
+                onDelete={handleDeleteEvent} 
+            />
             
             {events.length === 0 && (
-                <div className="text-center mt-5 text-muted">
+                <div className="text-center mt-5 text-muted border p-5 rounded bg-light">
                     <p>No events found for this program.</p>
                 </div>
             )}
