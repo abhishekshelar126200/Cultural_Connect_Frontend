@@ -25,6 +25,8 @@ import HeritageDashboard from './HeritageManagement/pages/HeritageDashboard';
 import CreateHeritageSite from './HeritageManagement/pages/CreateHeritageSite';
 import HeritageSiteDetails from './HeritageManagement/pages/HeritageSiteDetails';
 import OfficerDashboard from './ProgramManagement/pages/OfficerDashboard';
+import ProgramManagerPrograms from './ProgramManagement/pages/ProgramManagerPrograms';
+import CreateProgram from './ProgramManagement/components/CreateProgram';
 
 function App() {
   return <>
@@ -45,6 +47,7 @@ function App() {
 
       <Route path="/admin" element={<AdminRoutes />}>
         <Route path="dashboard" element={<AdminDashboard />} />
+
 
         {/* <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
@@ -77,6 +80,10 @@ function App() {
 
       <Route path="/programmanager" element={<ProgramManagerRoutes />}>
         <Route path="dashboard" element={<ProgramManagerDashboard />} />
+        <Route path="programs" element={<ProgramManagerPrograms />} />
+        <Route path="create" element={<CreateProgram />} />
+
+
 
         {/* <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
