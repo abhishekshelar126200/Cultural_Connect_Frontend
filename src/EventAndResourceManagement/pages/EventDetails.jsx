@@ -8,7 +8,7 @@ import {
 } from "../PreservationActivities.api";
 
 export default function HeritageSiteDetails() {
-    const { siteId } = useParams();
+    const {eventId } = useParams();
     const closeBtnRef = useRef(null); // To close modal programmatically
 
     const [site, setSite] = useState(null);

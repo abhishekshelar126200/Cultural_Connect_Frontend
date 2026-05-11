@@ -19,53 +19,40 @@ export default function EventList({ events, onDelete }) {
         <div className="row g-4">
             {events.map((event) => (
                 <div className="col-md-6 col-lg-4" key={event.eventId}>
-                    <Link
-                        to={`/events/${event.eventId}`}
-                        className="text-decoration-none text-dark h-100 d-block"
-                    >
-                        <div className="card shadow-sm h-100 position-relative">
+                    {/* The main card Link - leads to Event Details */}
+                    <div className="card shadow-sm h-100 position-relative">
+                        
+                        {/* Delete Button */}
+                        <button
+                            className="btn btn-sm btn-danger position-absolute"
+                            style={{ top: "10px", right: "10px", zIndex: 10 }}
+                            onClick={(e) => handleDelete(e, event.eventId)}
+                        >
+                            🗑
+                        </button>
 
-                            {/* Delete Button */}
-                            <button
-                                className="btn btn-sm btn-danger position-absolute"
-                                style={{ top: "10px", right: "10px", zIndex: 10 }}
-                                onClick={(e) => handleDelete(e, event.eventId)}
-                                title="Delete Event"
-                            >
-                                🗑
-                            </button>
+                        <div className="card-body d-flex flex-column">
+                            <h5 className="card-title fw-bold">{event.title}</h5>
+                            <p className="text-muted mb-2 small">📍 {event.location}</p>
+                            <p className="small text-secondary mb-1">📅 {event.date}</p>
+                            
+                            <div className="mt-auto">
+                                <span className={`badge ${event.status === "ACTIVE" ? "bg-success" : "bg-secondary"} mb-3`}>
+                                    {event.status}
+                                </span>
 
-                            <div className="card-body d-flex flex-column">
-                                <h5 className="card-title fw-bold">
-                                    {event.title}
-                                </h5>
-
-                                <p className="text-muted mb-2 small">
-                                    📍 {event.location}
-                                </p>
-
-                                <p className="small text-secondary mb-1">
-                                    📅 {event.date}
-                                </p>
-
-                                <p className="small text-secondary flex-grow-1">
-                                    Program ID: {event.programId}
-                                </p>
-
-                                <div>
-                                    <span
-                                        className={`badge ${
-                                            event.status === "ACTIVE"
-                                                ? "bg-success"
-                                                : "bg-secondary"
-                                        }`}
+                                {/* ✅ ADDED THIS LINK HERE ✅ */}
+                                <div className="d-grid border-top pt-2">
+                                    <Link
+                                        to={`/programmanager/eventResources/${event.programId}/${event.eventId}`}
+                                        className="btn btn-sm btn-outline-primary"
                                     >
-                                        {event.status}
-                                    </span>
+                                        📦 Manage Resources
+                                    </Link>
                                 </div>
                             </div>
                         </div>
-                    </Link>
+                    </div>
                 </div>
             ))}
 
