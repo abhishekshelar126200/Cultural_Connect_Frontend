@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getProgramById, applyForProgram} from "../citizen.api";
+import { getProgramById, applyForProgram, checkApplied } from "../citizen.api";
 import { httpEventClient } from "../../Services/httpClient";
 
 export default function ProgramDetails() {
@@ -9,70 +9,97 @@ export default function ProgramDetails() {
 
     const [program, setProgram] = useState({});
     const [events, setEvents] = useState([]);
-
     const [applied, setApplied] = useState(false);
-
 
     useEffect(() => {
         loadData();
+        checkIfApplied();
     }, []);
 
-    const loadData = async () => {
-        const programRes = await getProgramById(id);
-        setProgram(programRes.data);
+    // ✅ CHECK IF ALREADY APPLIED (IMPORTANT)
+    const checkIfApplied = async () => {
+        try {
+            const citizenId = localStorage.getItem("userId");
 
-        // ✅ Get event IDs
-        const eventIdsRes = await httpEventClient.get(`/program/${id}`);
-        const eventIds = eventIdsRes.data;
+            const res = await checkApplied(citizenId, id);
 
-        // ✅ Fetch event details
-        const eventDetails = await Promise.all(
-            eventIds.map(eid => httpEventClient.get(`/${eid}`))
-        );
+            if (res.data === true) {
+                setApplied(true);
+            }
 
-        setEvents(eventDetails.map(e => e.data));
+        } catch (err) {
+            console.error("Check applied error:", err);
+        }
     };
 
-   const handleApply = async () => {
+    // ✅ LOAD PROGRAM + EVENTS
+    const loadData = async () => {
+        try {
+            const programRes = await getProgramById(id);
+            setProgram(programRes.data);
 
-    const confirm = window.confirm("Are you sure you want to apply for this program?");
-    if (!confirm) return;
+            // ✅ Fetch event IDs
+            const eventIdsRes = await httpEventClient.get(`/program/${id}`);
+            const eventIds = eventIdsRes.data;
 
-    try {
-        const citizenId = localStorage.getItem("userId");
+            // ✅ Fetch event details
+            const eventDetails = await Promise.all(
+                eventIds.map(eid => httpEventClient.get(`/${eid}`))
+            );
 
-        const requestData = {
-            citizenId: Number(citizenId),
-            programId: Number(id)
-        };
-        console.log(citizenId, id);
-        console.log(programId, citizenId);
+            setEvents(eventDetails.map(e => e.data));
 
-        const res = await applyForProgram(requestData);
-
-        console.log(res.data);
-
-        // ✅ SET APPLIED HERE
-        setApplied(true);
-
-        alert("✅ Application Submitted Successfully!");
-
-    } catch (err) {
-        console.error(err);
-
-        if (err.response) {
-            alert(err.response.data.message || "❌ Failed to apply");
-        } else {
-            alert("❌ Server error");
+        } catch (err) {
+            console.error("Load data error:", err);
         }
-    }
-};
+    };
 
+    // ✅ APPLY FUNCTION
+    const handleApply = async () => {
+
+        const confirm = window.confirm("Are you sure you want to apply for this program?");
+        if (!confirm) return;
+
+        try {
+            const citizenId = localStorage.getItem("userId");
+
+            const requestData = {
+                citizenId: Number(citizenId),
+                programId: Number(id)
+            };
+
+            const res = await applyForProgram(requestData);
+
+            console.log(res.data);
+
+            // ✅ SET APPLIED TRUE
+            setApplied(true);
+
+            alert("✅ Application Submitted Successfully!");
+
+        } catch (err) {
+            console.error("Apply error:", err);
+
+            if (err.response) {
+
+                if (err.response.status === 400) {
+                    alert("✅ Already Applied");
+                    setApplied(true);   // ✅ CRITICAL FIX
+                } else {
+                    alert(err.response.data);
+                }
+
+            } else {
+                alert("Server error");
+            }
+        }
+
+    };
 
     return (
         <div className="container">
 
-            {/* ✅ Program Info */}
+            {/* ✅ PROGRAM DETAILS */}
             <div className="card p-3 mb-4">
                 <h3>{program.title}</h3>
 
@@ -83,8 +110,10 @@ export default function ProgramDetails() {
                 <p><b>Budget:</b> {program.budget}</p>
             </div>
 
-            {/* ✅ Events */}
+            {/* ✅ EVENTS */}
             <h5>Events</h5>
+
+            {events.length === 0 && <p>No events available</p>}
 
             {events.map(e => (
                 <div key={e.eventId} className="card p-2 mb-2">
@@ -94,7 +123,7 @@ export default function ProgramDetails() {
                 </div>
             ))}
 
-            {/* ✅ Apply Button */}
+            {/* ✅ APPLY BUTTON */}
             <button
                 className="btn btn-success position-fixed"
                 style={{ bottom: "20px", right: "20px" }}
@@ -103,7 +132,6 @@ export default function ProgramDetails() {
             >
                 {applied ? "Already Applied ✅" : "Apply Program"}
             </button>
-
 
         </div>
     );
