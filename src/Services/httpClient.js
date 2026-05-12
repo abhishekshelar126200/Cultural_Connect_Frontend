@@ -24,6 +24,45 @@ const httpLoginClient = axios.create({
     },
 });
 
+
+// --------------- Heritage Client ---------------
+const httpHeritageClient = axios.create({
+    baseURL: "http://localhost:8081/api/heritage-sites",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// --------------- Preservation Client ---------------
+const httpPreservationClient = axios.create({
+    baseURL: "http://localhost:8081/api/activities",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+
+// --------------- Upload File Client ---------------
+const httpFileUploadClient = axios.create({
+    baseURL: "http://localhost:8081//api/events",
+});
+
+// --------------- EventAndResource Client ---------------
+const httpEventClient = axios.create({
+    baseURL: "http://localhost:8081/api/events",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// --------------- EventAndResource Client ---------------
+const httpResourceClient = axios.create({
+    baseURL: "http://localhost:8081/api/resources",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
 // ✅ Attach interceptor ONLY to protected APIs
 const attachToken = (config) => {
     const token = localStorage.getItem("jwtToken");
@@ -35,11 +74,19 @@ const attachToken = (config) => {
 
 httpCitizenClient.interceptors.request.use(attachToken);
 httpProgramClient.interceptors.request.use(attachToken);
-
-
+httpHeritageClient.interceptors.request.use(attachToken);
+httpFileUploadClient.interceptors.request.use(attachToken);
+httpPreservationClient.interceptors.request.use(attachToken);
+httpEventClient.interceptors.request.use(attachToken);
+httpResourceClient.interceptors.request.use(attachToken);
 
 export {
     httpCitizenClient,
     httpProgramClient,
-    httpLoginClient
+    httpLoginClient,
+    httpHeritageClient,
+    httpFileUploadClient,
+    httpPreservationClient,
+    httpEventClient,
+    httpResourceClient
 };

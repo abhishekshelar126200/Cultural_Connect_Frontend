@@ -21,6 +21,17 @@ import ProgramManagerDashboard from './ProgramManagement/pages/ProgramManagerDas
 import AuditorRoutes from './Routes/AuditorRoutes';
 import AuditorDashboard from './ComplianceAndAudit/pages/AuditorDashboard';
 import HomePageRoutes from './Routes/HomePageRoutes';
+import HeritageDashboard from './HeritageManagement/pages/HeritageDashboard';
+import CreateHeritageSite from './HeritageManagement/pages/CreateHeritageSite';
+import HeritageSiteDetails from './HeritageManagement/pages/HeritageSiteDetails';
+import OfficerDashboard from './ProgramManagement/pages/OfficerDashboard';
+import ProgramManagerPrograms from './ProgramManagement/pages/ProgramManagerPrograms';
+import CreateProgram from './ProgramManagement/components/CreateProgram';
+import CreateEvent from './EventAndResourceManagement/pages/CreateEvent';
+import EventDashboard from './EventAndResourceManagement/pages/EventDashboard';
+import ResourceDashboard from './EventAndResourceManagement/pages/ResourceDashboard';
+import CreateResource from './EventAndResourceManagement/pages/CreateResource';
+
 function App() {
   return <>
     <Routes>
@@ -41,6 +52,7 @@ function App() {
       <Route path="/admin" element={<AdminRoutes />}>
         <Route path="dashboard" element={<AdminDashboard />} />
 
+
         {/* <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
         <Route path="notifications" element={<Notifications />} /> */}
@@ -49,6 +61,7 @@ function App() {
 
       <Route path="/compliance-audit" element={<ComplianceAndAuditRoutes />}>
         <Route path="dashboard" element={<ComplianceAndAuditDashboard />} />
+        Username
 
         {/* <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
@@ -57,7 +70,12 @@ function App() {
       </Route>
 
       <Route path="/culturalofficer" element={<CulturalOfficerRoutes />}>
-        <Route path="dashboard" element={<CulturalOfficerDashboard />} />
+        <Route path="dashboard" element={<OfficerDashboard />} />
+        <Route path="heritage" element={<HeritageDashboard />} />
+        <Route path="createHeritageSite" element={<CreateHeritageSite />} />
+        <Route path="heritageSiteDetails/:siteId" element={<HeritageSiteDetails />} />
+        <Route path="officerdashboard" element={<OfficerDashboard />} />
+
 
         {/* <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
@@ -65,14 +83,21 @@ function App() {
 
       </Route>
 
-      <Route path="/programmanager" element={<ProgramManagerRoutes />}>
-        <Route path="dashboard" element={<ProgramManagerDashboard />} />
-
-        {/* <Route path="grants" element={<MyGrants />} />
-        <Route path="events" element={<MyEvents />} />
-        <Route path="notifications" element={<Notifications />} /> */}
-
-      </Route>
+      // Combine into ONE block in App.js
+<Route path="/programmanager" element={<ProgramManagerRoutes />}>
+    <Route path="dashboard" element={<ProgramManagerDashboard />} />
+    <Route path="programs" element={<ProgramManagerPrograms />} />
+    <Route path="create" element={<CreateProgram />} />
+    
+    {/* Events Drill-down */}
+    <Route path="programEvents/:programId" element={<EventDashboard />} />
+    <Route path="createEvent/:programId" element={<CreateEvent />} />
+    
+    {/* Resources Drill-down (Linked to Event) */}
+    {/* Make sure these match the Links in your EventList */}
+    <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
+    <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+</Route>
 
       <Route path="/auditor" element={<AuditorRoutes />}>
         <Route path="dashboard" element={<AuditorDashboard />} />

@@ -1,18 +1,16 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../CommonComponents/Navbar";
-import Sidebar from "../CitizenManagement/components/Sidebar";
+import ProgramManagerSidebar from "../ProgramManagement/components/ProgramManagerSidebar";
 
 function ProgramManagerRoutes() {
     return (
         <div className="min-vh-100 d-flex flex-column">
 
-            {/* Top Navbar */}
             <Navbar />
 
-            {/* Content Area */}
             <div className="d-flex flex-grow-1">
-                {/* <Sidebar /> */}
+                <ProgramManagerSidebar />
 
                 <main className="flex-grow-1 bg-light">
                     <div className="container py-4">
@@ -20,8 +18,6 @@ function ProgramManagerRoutes() {
                     </div>
                 </main>
             </div>
-
-            {/* <Footer /> */}
         </div>
     );
 }
