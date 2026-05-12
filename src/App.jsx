@@ -33,6 +33,8 @@ import ResourceDashboard from './EventAndResourceManagement/pages/ResourceDashbo
 import CreateResource from './EventAndResourceManagement/pages/CreateResource';
 import EditEvent from './EventAndResourceManagement/pages/EditEvent';
 import EditResource from './EventAndResourceManagement/pages/EditResource';
+import ProgramDetails from './CitizenManagement/components/ProgramDetails';
+import CitizenPrograms from './CitizenManagement/components/CitizenPrograms';
 
 function App() {
   return <>
@@ -44,6 +46,9 @@ function App() {
       <Route path="/" element={<HomePageRoutes />} />
       <Route path="/citizen" element={<CitizenRoutes />}>
         <Route path="dashboard" element={<CitizenDashboard />} />
+
+        <Route path="programs" element={<CitizenPrograms />} />
+        <Route path="program/:id" element={<ProgramDetails />} />
 
         <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
@@ -86,26 +91,26 @@ function App() {
       </Route>
 
       // Combine into ONE block in App.js
-<Route path="/programmanager" element={<ProgramManagerRoutes />}>
-    <Route path="dashboard" element={<ProgramManagerDashboard />} />
-    <Route path="programs" element={<ProgramManagerPrograms />} />
-    <Route path="create" element={<CreateProgram />} />
-    
-    {/* Events Drill-down */}
-    <Route path="programEvents/:programId" element={<EventDashboard />} />
-    <Route path="createEvent/:programId" element={<CreateEvent />} />
-    
-    {/* Resources Drill-down (Linked to Event) */}
-    {/* Make sure these match the Links in your EventList */}
-    <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
-    <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
-    <Route path="/programmanager" element={<ProgramManagerRoutes />}>
-    {/* ... other routes ... */}
-    
-    <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
-    <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
-</Route>
-</Route>
+      <Route path="/programmanager" element={<ProgramManagerRoutes />}>
+        <Route path="dashboard" element={<ProgramManagerDashboard />} />
+        <Route path="programs" element={<ProgramManagerPrograms />} />
+        <Route path="create" element={<CreateProgram />} />
+
+        {/* Events Drill-down */}
+        <Route path="programEvents/:programId" element={<EventDashboard />} />
+        <Route path="createEvent/:programId" element={<CreateEvent />} />
+
+        {/* Resources Drill-down (Linked to Event) */}
+        {/* Make sure these match the Links in your EventList */}
+        <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
+        <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+        <Route path="/programmanager" element={<ProgramManagerRoutes />}>
+          {/* ... other routes ... */}
+
+          <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
+          <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
+        </Route>
+      </Route>
 
       <Route path="/auditor" element={<AuditorRoutes />}>
         <Route path="dashboard" element={<AuditorDashboard />} />

@@ -7,10 +7,20 @@ function Dashboard() {
 
     const [programs, setPrograms] = useState([]);
 
-    const loadPrograms = async () => {
-        const res = await getPrograms();
-        setPrograms(res.data);
-    };
+  const loadPrograms = async () => {
+    const res = await getPrograms();
+
+    // ✅ Sort latest first
+    const sorted = res.data.sort(
+        (a, b) => b.programId - a.programId
+    );
+
+    // ✅ Take only top 15
+    const latest15 = sorted.slice(0, 15);
+
+    setPrograms(latest15);
+};
+
 
     useEffect(() => {
         loadPrograms();
