@@ -1,0 +1,71 @@
+/* Container animation */
+.notifications-container {
+    animation: fadeIn 0.4s ease-in-out;
+    padding: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Notification Card */
+.notification-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+    border-left: 5px solid #dee2e6; /* Default Grey line */
+    position: relative;
+}
+
+/* Blue line and tint for unread (SENT) status */
+.notification-card.unread {
+    border-left: 5px solid #0d6efd; 
+    background-color: #f8fbff;
+}
+
+.notification-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Category Badge Styling */
+.category-badge {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* Color coding by category */
+.badge-PROJECT { background-color: #e3f2fd; color: #0d6efd; }
+.badge-PROGRAM { background-color: #f3e5f5; color: #9c27b0; }
+.badge-GENERAL { background-color: #e8f5e9; color: #2e7d32; }
+
+/* Text and Date elements */
+.notif-date {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.notif-message {
+    color: #495057;
+    line-height: 1.6;
+    margin-top: 12px;
+    font-size: 1rem;
+}
+
+/* Mark as Read Button */
+.mark-read-btn {
+    border-radius: 20px;
+    padding: 5px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
