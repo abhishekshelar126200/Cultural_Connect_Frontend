@@ -16,18 +16,17 @@ export default function EditEvent() {
 
     const [loading, setLoading] = useState(true);
 
-    // Load existing event data
     useEffect(() => {
         const fetchEvent = async () => {
             try {
                 const res = await getEventById(eventId);
-                // Ensure we only set fields that the form uses
+                // Map API response to local state
                 setFormData({
-                    title: res.data.title,
-                    location: res.data.location,
-                    date: res.data.date,
-                    participants: res.data.participants,
-                    status: res.data.status
+                    title: res.data.title || "",
+                    location: res.data.location || "",
+                    date: res.data.date || "",
+                    participants: res.data.participants || 0,
+                    status: res.data.status || "PENDING"
                 });
             } catch (err) {
                 console.error("Fetch error:", err);
@@ -42,10 +41,10 @@ export default function EditEvent() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // ✅ IMPORTANT: Inject programId into the payload
+        // Construct payload with required ID types for Spring Boot
         const payload = {
             ...formData,
-            programId: Number(programId), // Backend validation requires this
+            programId: Number(programId), 
             participants: Number(formData.participants)
         };
 
@@ -59,58 +58,85 @@ export default function EditEvent() {
         }
     };
 
-    if (loading) return <div className="text-center mt-5">Loading...</div>;
+    if (loading) return <div className="text-center mt-5"><h5>Loading Event Details...</h5></div>;
 
     return (
-        <div className="container mt-5">
-            <div className="card shadow border-0 p-4 mx-auto" style={{ maxWidth: "550px" }}>
-                <h3 className="fw-bold mb-4">Edit Event</h3>
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3 text-start">
-                        <label className="form-label fw-bold">Title</label>
-                        <input 
-                            type="text" className="form-control" name="title"
-                            value={formData.title} 
-                            onChange={(e) => setFormData({...formData, title: e.target.value})} 
-                            required 
-                        />
-                    </div>
+        <div className="container-fluid py-4">
+            <div className="card shadow-sm border-0 mx-auto" style={{ maxWidth: "600px" }}>
+                <div className="card-header bg-white border-0 pt-4 text-center">
+                    <h3 className="fw-bold text-primary">Edit Event</h3>
+                    <p className="text-muted small">Update details for Event #{eventId}</p>
+                </div>
+                <div className="card-body p-4">
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label className="form-label fw-bold">Event Title</label>
+                            <input 
+                                type="text" className="form-control"
+                                value={formData.title} 
+                                onChange={(e) => setFormData({...formData, title: e.target.value})} 
+                                required 
+                            />
+                        </div>
 
-                    <div className="mb-3 text-start">
-                        <label className="form-label fw-bold">Location</label>
-                        <input 
-                            type="text" className="form-control" name="location"
-                            value={formData.location} 
-                            onChange={(e) => setFormData({...formData, location: e.target.value})} 
-                            required 
-                        />
-                    </div>
+                        <div className="mb-3">
+                            <label className="form-label fw-bold">Location</label>
+                            <input 
+                                type="text" className="form-control"
+                                value={formData.location} 
+                                onChange={(e) => setFormData({...formData, location: e.target.value})} 
+                                required 
+                            />
+                        </div>
 
-                    <div className="mb-3 text-start">
-                        <label className="form-label fw-bold">Date</label>
-                        <input 
-                            type="date" className="form-control" name="date"
-                            value={formData.date} 
-                            onChange={(e) => setFormData({...formData, date: e.target.value})} 
-                            required 
-                        />
-                    </div>
+                        <div className="row">
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label fw-bold">Date</label>
+                                <input 
+                                    type="date" className="form-control"
+                                    value={formData.date} 
+                                    onChange={(e) => setFormData({...formData, date: e.target.value})} 
+                                    required 
+                                />
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label fw-bold">Participants</label>
+                                <input 
+                                    type="number" className="form-control"
+                                    value={formData.participants} 
+                                    onChange={(e) => setFormData({...formData, participants: e.target.value})} 
+                                    required 
+                                />
+                            </div>
+                        </div>
 
-                    <div className="mb-4 text-start">
-                        <label className="form-label fw-bold">Participants</label>
-                        <input 
-                            type="number" className="form-control" name="participants"
-                            value={formData.participants} 
-                            onChange={(e) => setFormData({...formData, participants: e.target.value})} 
-                            required 
-                        />
-                    </div>
+                        <div className="mb-4">
+                            <label className="form-label fw-bold">Status</label>
+                            <select 
+                                className="form-select"
+                                value={formData.status}
+                                onChange={(e) => setFormData({...formData, status: e.target.value})}
+                            >
+                                <option value="PENDING">PENDING</option>
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="COMPLETED">COMPLETED</option>
+                            </select>
+                        </div>
 
-                    <div className="d-grid gap-2">
-                        <button type="submit" className="btn btn-primary py-2">Update Event</button>
-                        <button type="button" className="btn btn-outline-secondary" onClick={() => navigate(-1)}>Cancel</button>
-                    </div>
-                </form>
+                        <div className="d-grid gap-2">
+                            <button type="submit" className="btn btn-primary py-2 shadow-sm">
+                                Save Changes
+                            </button>
+                            <button 
+                                type="button" 
+                                className="btn btn-light py-2" 
+                                onClick={() => navigate(-1)}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

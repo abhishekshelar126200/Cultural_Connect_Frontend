@@ -1,0 +1,26 @@
+/* --- Sidebar Dynamic Styles --- */
+
+/* The red circle for unread counts in Sidebar */
+.notif-badge {
+    background-color: #dc3545; /* Bootstrap danger red */
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: auto; /* Pushes the badge to the far right of the link */
+    line-height: 1.4;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Ensure Sidebar NavLinks have a consistent hover effect */
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #28a745 !important; /* Changes text to CultureConnect green on hover */
+}
+
+/* Active NavLink (Matching your blue selection in screenshot) */
+.nav-link.active {
+    background-color: #0d6efd !important;
+    color: white !important;
+}

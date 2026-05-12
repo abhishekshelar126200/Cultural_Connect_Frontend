@@ -72,7 +72,21 @@ const httpComplianceClient = axios.create({
     },
 });
 
+// --------------- Admin  Client ---------------
+const httpAdminClient = axios.create({
+    baseURL: "http://localhost:8081/cultureconnect",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 
+// --------------- Admin/audit logs  Client ---------------
+const httpAdminlogClient = axios.create({
+    baseURL: "http://localhost:8081/audit_log",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 
 // ✅ Attach interceptor ONLY to protected APIs
 const attachToken = (config) => {
