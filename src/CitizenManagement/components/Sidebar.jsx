@@ -18,6 +18,15 @@ function Sidebar() {
                         📊 Dashboard Stats
                     </NavLink>
                 </li>
+                <li className="nav-item">
+                    <NavLink
+                        to="/citizen/programs"
+                        className="nav-link text-white"
+                    >
+                        📚 Programs
+                    </NavLink>
+                </li>
+
 
                 <li className="nav-item">
                     <NavLink

@@ -30,6 +30,8 @@ import ResourceDashboard from './EventAndResourceManagement/pages/ResourceDashbo
 import CreateResource from './EventAndResourceManagement/pages/CreateResource';
 import EditEvent from './EventAndResourceManagement/pages/EditEvent';
 import EditResource from './EventAndResourceManagement/pages/EditResource';
+import ProgramDetails from './CitizenManagement/components/ProgramDetails';
+import CitizenPrograms from './CitizenManagement/components/CitizenPrograms';
 
 function App() {
   return (
@@ -41,6 +43,10 @@ function App() {
       {/* Citizen Block */}
       <Route path="/citizen" element={<CitizenRoutes />}>
         <Route path="dashboard" element={<CitizenDashboard />} />
+
+        <Route path="programs" element={<CitizenPrograms />} />
+        <Route path="program/:id" element={<ProgramDetails />} />
+
         <Route path="grants" element={<MyGrants />} />
         <Route path="events" element={<MyEvents />} />
         <Route path="notifications" element={<Notifications />} />
