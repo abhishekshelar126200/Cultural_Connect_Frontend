@@ -39,6 +39,16 @@ function Sidebar() {
                     <NavLink to="/citizen/dashboard" end className="nav-link text-white">📊 Dashboard Stats</NavLink>
                 </li>
                 <li className="nav-item">
+                    <NavLink
+                        to="/citizen/programs"
+                        className="nav-link text-white"
+                    >
+                        📚 Programs
+                    </NavLink>
+                </li>
+
+
+                <li className="nav-item">
                     <NavLink to="/citizen/grants" className="nav-link text-white">💰 My Grants</NavLink>
                 </li>
                 <li className="nav-item">

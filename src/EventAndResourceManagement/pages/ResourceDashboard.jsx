@@ -1,66 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getAllResources, deleteResource } from "../Resource.api";
-import ResourceList from "../components/ResourceList"; // Import your new component
+import ResourceList from "../components/ResourceList";
 
 export default function ResourceDashboard() {
-    const { programId, eventId } = useParams();
     const [resources, setResources] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { programId, eventId } = useParams(); // Captured from App.js route
 
-    const loadData = async () => {
+    const loadResources = async () => {
         try {
             const res = await getAllResources();
-            // Filter global resources to only show those belonging to this event
-            const filtered = res.data.filter(r => String(r.eventId) === String(eventId));
+            // Filter resources belonging to this specific event
+            const filtered = res.data.filter(r => r.eventId === Number(eventId));
             setResources(filtered);
         } catch (err) {
-            console.error("Error loading resources", err);
-        } finally {
-            setLoading(false);
+            console.error("Failed to fetch resources", err);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this resource?")) return;
+        try {
+            await deleteResource(id);
+            setResources(prev => prev.filter(r => r.resourceId !== id));
+        } catch (err) {
+            alert("Delete failed.");
         }
     };
 
     useEffect(() => {
-        loadData();
+        loadResources();
     }, [eventId]);
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteResource(id);
-            // Optimization: Remove from local state instead of re-fetching everything
-            setResources(prev => prev.filter(r => r.resourceId !== id));
-        } catch (err) {
-            alert("Delete failed on server");
-        }
-    };
-
-    if (loading) return <div className="text-center mt-5"><h5>Loading Resources...</h5></div>;
-
     return (
-        <div className="container">
-            {/* Breadcrumb Navigation */}
-            <nav aria-label="breadcrumb" className="mb-4">
-                <ol className="breadcrumb">
-                    <li className="breadcrumb-item"><Link to="/programmanager/programs">Programs</Link></li>
-                    <li className="breadcrumb-item"><Link to={`/programmanager/programEvents/${programId}`}>Events</Link></li>
-                    <li className="breadcrumb-item active">Resources</li>
-                </ol>
-            </nav>
-
-            {/* Header Section */}
+        <div className="container my-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h3 className="fw-bold text-success mb-0">Event Resources</h3>
-                    <p className="text-muted small">Managing resources for Event #{eventId}</p>
-                </div>
-                <Link to={`/programmanager/createResource/${programId}/${eventId}`} className="btn btn-success shadow-sm">
+                <h3 className="fw-bold text-success">Event Resources</h3>
+                <Link 
+                    to={`/programmanager/addResource/${programId}/${eventId}`} 
+                    className="btn btn-success"
+                >
                     ➕ Add Resource
                 </Link>
             </div>
 
-            {/* Use the ResourceList component to render the grid */}
-            <ResourceList resources={resources} onDelete={handleDelete} />
+            {/* CRITICAL: Pass programId and eventId as props */}
+            <ResourceList 
+                resources={resources} 
+                programId={programId} 
+                eventId={eventId} 
+                onDelete={handleDelete} 
+            />
+
+            {resources.length === 0 && (
+                <div className="text-center mt-5 py-5 border rounded bg-light text-muted">
+                    <p>No resources allocated for this event yet.</p>
+                </div>
+            )}
         </div>
     );
 }
