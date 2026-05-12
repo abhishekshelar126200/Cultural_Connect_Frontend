@@ -63,6 +63,17 @@ const httpResourceClient = axios.create({
     },
 });
 
+
+// --------------- EventAndResource Client ---------------
+const httpComplianceClient = axios.create({
+    baseURL: "http://localhost:8081/compliance",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+
+
 // ✅ Attach interceptor ONLY to protected APIs
 const attachToken = (config) => {
     const token = localStorage.getItem("jwtToken");
@@ -79,7 +90,7 @@ httpFileUploadClient.interceptors.request.use(attachToken);
 httpPreservationClient.interceptors.request.use(attachToken);
 httpEventClient.interceptors.request.use(attachToken);
 httpResourceClient.interceptors.request.use(attachToken);
-
+httpComplianceClient.interceptors.request.use(attachToken);
 export {
     httpCitizenClient,
     httpProgramClient,
@@ -88,5 +99,6 @@ export {
     httpFileUploadClient,
     httpPreservationClient,
     httpEventClient,
-    httpResourceClient
+    httpResourceClient,
+    httpComplianceClient
 };
