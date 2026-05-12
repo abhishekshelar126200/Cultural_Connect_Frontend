@@ -133,9 +133,15 @@ import HomePageRoutes from './Routes/HomePageRoutes';
 import HeritageDashboard from './HeritageManagement/pages/HeritageDashboard';
 import CreateHeritageSite from './HeritageManagement/pages/CreateHeritageSite';
 import HeritageSiteDetails from './HeritageManagement/pages/HeritageSiteDetails';
-
-// ✅ NEW: Compliance internal pages (ADD ONLY)
-import ComplianceDashboard from './ComplianceAndAudit/pages/ComplianceAndAuditDashboard';
+import OfficerDashboard from './ProgramManagement/pages/OfficerDashboard';
+import ProgramManagerPrograms from './ProgramManagement/pages/ProgramManagerPrograms';
+import CreateProgram from './ProgramManagement/components/CreateProgram';
+import CreateEvent from './EventAndResourceManagement/pages/CreateEvent';
+import EventDashboard from './EventAndResourceManagement/pages/EventDashboard';
+import ResourceDashboard from './EventAndResourceManagement/pages/ResourceDashboard';
+import CreateResource from './EventAndResourceManagement/pages/CreateResource';
+import EditEvent from './EventAndResourceManagement/pages/EditEvent';
+import EditResource from './EventAndResourceManagement/pages/EditResource';
 
 function App() {
   return (
@@ -168,19 +174,16 @@ function App() {
           {/* MAIN DASHBOARD */}
           <Route path="dashboard" element={<ComplianceDashboard />} />
 
-          {/* OLD dashboard jodi use hoy future e (keep safe) */}
-          <Route path="overview" element={<ComplianceAndAuditDashboard />} />
+
+        {/* <Route path="grants" element={<MyGrants />} />
+        <Route path="events" element={<MyEvents />} />
+        <Route path="notifications" element={<Notifications />} /> */}
 
         </Route>
 
-        {/* ✅ Cultural Officer */}
-        <Route path="/culturalofficer" element={<CulturalOfficerRoutes />}>
-          <Route path="dashboard" element={<OfficerDashboard />} />
-          <Route path="heritage" element={<HeritageDashboard />} />
-          <Route path="createHeritageSite" element={<CreateHeritageSite />} />
-          <Route path="heritageSiteDetails/:siteId" element={<HeritageSiteDetails />} />
-          <Route path="officerdashboard" element={<OfficerDashboard />} />
-        </Route>
+      <Route path="/compliance-audit" element={<ComplianceAndAuditRoutes />}>
+        <Route path="dashboard" element={<ComplianceAndAuditDashboard />} />
+        Username
 
         {/* ✅ Program Manager */}
         <Route path="/programmanager" element={<ProgramManagerRoutes />}>
@@ -192,9 +195,53 @@ function App() {
           <Route path="dashboard" element={<AuditorDashboard />} />
         </Route>
 
-      </Routes>
-    </>
-  );
+      <Route path="/culturalofficer" element={<CulturalOfficerRoutes />}>
+        <Route path="dashboard" element={<OfficerDashboard />} />
+        <Route path="heritage" element={<HeritageDashboard />} />
+        <Route path="createHeritageSite" element={<CreateHeritageSite />} />
+        <Route path="heritageSiteDetails/:siteId" element={<HeritageSiteDetails />} />
+        <Route path="officerdashboard" element={<OfficerDashboard />} />
+
+
+        {/* <Route path="grants" element={<MyGrants />} />
+        <Route path="events" element={<MyEvents />} />
+        <Route path="notifications" element={<Notifications />} /> */}
+
+      </Route>
+
+      // Combine into ONE block in App.js
+<Route path="/programmanager" element={<ProgramManagerRoutes />}>
+    <Route path="dashboard" element={<ProgramManagerDashboard />} />
+    <Route path="programs" element={<ProgramManagerPrograms />} />
+    <Route path="create" element={<CreateProgram />} />
+    
+    {/* Events Drill-down */}
+    <Route path="programEvents/:programId" element={<EventDashboard />} />
+    <Route path="createEvent/:programId" element={<CreateEvent />} />
+    
+    {/* Resources Drill-down (Linked to Event) */}
+    {/* Make sure these match the Links in your EventList */}
+    <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
+    <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+    <Route path="/programmanager" element={<ProgramManagerRoutes />}>
+    {/* ... other routes ... */}
+    
+    <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
+    <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
+</Route>
+</Route>
+
+      <Route path="/auditor" element={<AuditorRoutes />}>
+        <Route path="dashboard" element={<AuditorDashboard />} />
+
+        {/* <Route path="grants" element={<MyGrants />} />
+        <Route path="events" element={<MyEvents />} />
+        <Route path="notifications" element={<Notifications />} /> */}
+
+      </Route>
+
+    </Routes>
+  </>
 }
 
 export default App;
