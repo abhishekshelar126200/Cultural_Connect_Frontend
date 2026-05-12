@@ -87,6 +87,27 @@ function App() {
         <Route path="addResource/:programId/:eventId" element={<CreateResource />} />
         <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
       </Route>
+      // Combine into ONE block in App.js
+
+    <Route path="dashboard" element={<ProgramManagerDashboard />} />
+    <Route path="programs" element={<ProgramManagerPrograms />} />
+    <Route path="create" element={<CreateProgram />} />
+    
+    {/* Events Drill-down */}
+    <Route path="programEvents/:programId" element={<EventDashboard />} />
+    <Route path="createEvent/:programId" element={<CreateEvent />} />
+    
+    {/* Resources Drill-down (Linked to Event) */}
+    {/* Make sure these match the Links in your EventList */}
+    <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
+    <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+    <Route path="/programmanager" element={<ProgramManagerRoutes />}>
+    {/* ... other routes ... */}
+    
+    <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
+    <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
+</Route>
+
 
       {/* Auditor Block */}
       <Route path="/auditor" element={<AuditorRoutes />}>
