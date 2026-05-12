@@ -83,7 +83,8 @@ function App() {
         
         {/* Resources */}
         <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
-        <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+        // Inside the /programmanager block in App.js
+        <Route path="addResource/:programId/:eventId" element={<CreateResource />} />
         <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
       </Route>
 
