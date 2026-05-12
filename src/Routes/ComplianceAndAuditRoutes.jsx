@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../CommonComponents/Navbar";
-import Sidebar from "../CitizenManagement/components/Sidebar";
+import Sidebar from "../ComplianceAndAudit/components/Sidebar";
 
 function ComplianceAndAuditRoutes() {
     return (
@@ -12,7 +12,7 @@ function ComplianceAndAuditRoutes() {
 
             {/* Content Area */}
             <div className="d-flex flex-grow-1">
-                {/* <Sidebar /> */}
+                <Sidebar />
 
                 <main className="flex-grow-1 bg-light">
                     <div className="container py-4">

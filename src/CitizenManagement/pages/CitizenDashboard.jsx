@@ -1,53 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { getPrograms } from "../citizen.api";
+import { getPrograms, fetchNotifications } from "../citizen.api";
 import ProgramStats from "../components/ProgramStats";
 import ProgramList from "../components/ProgramList";
 
 function Dashboard() {
-
     const [programs, setPrograms] = useState([]);
 
-    const loadPrograms = async () => {
-        const res = await getPrograms();
-        setPrograms(res.data);
+  const loadPrograms = async () => {
+    const res = await getPrograms();
+
+    // ✅ Sort latest first
+    const sorted = res.data.sort(
+        (a, b) => b.programId - a.programId
+    );
+
+    // ✅ Take only top 15
+    const latest15 = sorted.slice(0, 15);
+
+    setPrograms(latest15);
+};
+
+    const [unreadNotifCount, setUnreadNotifCount] = useState(0);
+
+    // ✅ DYNAMIC ID: Pull from localStorage
+    const citizenId = localStorage.getItem("userId");
+
+    const loadDashboardData = async () => {
+        if (!citizenId) return;
+        try {
+            const programRes = await getPrograms();
+            setPrograms(programRes.data);
+
+            const notifRes = await fetchNotifications(citizenId);
+            const unreadCount = notifRes.data.data.filter(n => n.status === "SENT").length;
+            setUnreadNotifCount(unreadCount);
+        } catch (error) {
+            console.error("Dashboard data error:", error);
+        }
     };
 
     useEffect(() => {
-        loadPrograms();
-    }, []);
-
-    // ✅ Stats derived from backend response
-    const appliedPrograms = programs.length;
-
-    const approvedGrants = 0
-    // programs.reduce(
-    //     (sum, program) => sum + program.grantIds.length,
-    //     0
-    // );
-
-    const upcomingEvents = 0
-    // programs.reduce(
-    //     (sum, program) => sum + program.eventIds.length,
-    //     0
-    // );
-
-    const notifications =
-        appliedPrograms + approvedGrants + upcomingEvents;
+        loadDashboardData();
+    }, [citizenId]);
 
     return (
         <div className="container my-4">
-
-            {/* -------- DASHBOARD STATS (UNCHANGED UI) -------- */}
             <ProgramStats programStats={{
-                appliedPrograms,
-                approvedGrants,
-                upcomingEvents,
-                notifications
+                appliedPrograms: programs.length,
+                approvedGrants: 0, 
+                upcomingEvents: 0, 
+                notifications: unreadNotifCount
             }} />
-
-            {/* -------- PROGRAM LIST SECTION (NEW) -------- */}
             <ProgramList programs={programs} />
-
         </div>
     );
 }

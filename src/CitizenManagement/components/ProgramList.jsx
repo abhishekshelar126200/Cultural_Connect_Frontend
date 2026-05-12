@@ -11,24 +11,22 @@ export default function ProgramList({ programs }) {
                     <div className="col-md-6" key={program.programId}>
                         <div className="card shadow-sm h-100">
                             <div className="card-body">
+
+                                {/* ✅ Program Title */}
                                 <h5 className="card-title">{program.title}</h5>
 
-                                <p className="card-text text-muted">
-                                    {program.description}
+                                {/* ✅ Start Date */}
+                                <p className="mb-1">
+                                    <strong>Start:</strong>{" "}
+                                    {new Date(program.startDate).toLocaleDateString()}
                                 </p>
 
-                                {/* <p className="mb-1">
-                                    <strong>Status:</strong>{" "}
-                                    <span className="badge bg-warning text-dark">
-                                        {program.status}
-                                    </span>
-                                </p> */}
+                                {/* ✅ End Date */}
+                                <p className="mb-1">
+                                    <strong>End:</strong>{" "}
+                                    {new Date(program.endDate).toLocaleDateString()}
+                                </p>
 
-                                {/* <small className="text-muted">
-                                    Applications: {program.applicationIds.length} |{" "}
-                                    Grants: {program.grantIds.length} |{" "}
-                                    Events: {program.eventIds.length}
-                                </small> */}
                             </div>
                         </div>
                     </div>

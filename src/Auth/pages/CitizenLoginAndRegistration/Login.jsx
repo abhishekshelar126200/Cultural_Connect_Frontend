@@ -184,7 +184,7 @@ function Login() {
                 // ✅ decode JWT
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 const userId = payload.userId;   // ✅ IMPORTANT
-                const username = payload.userName;
+                const username = payload.Username;
                 localStorage.setItem("userId", userId); // ✅ Store userId for later use
                 localStorage.setItem("username", username); // ✅ Store username for later use  
                 const role = payload.role;   // ✅ IMPORTANT
@@ -201,9 +201,9 @@ function Login() {
                 } else if (role === "MANAGER") {
                     navigate("/programmanager/dashboard");
                 } else if (role === "COMPLIANCE") {
-                    navigate("/compliance-audit/dashboard");
+                    navigate("/compliance-audit/new-programs");
                 } else if (role === "AUDITOR") {
-                    navigate("/auditor/dashboard");
+                    navigate("/audit/auditordashboard");
                 } else {
                     navigate("/citizen/dashboard");  // default
                 }
