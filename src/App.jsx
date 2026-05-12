@@ -51,7 +51,6 @@ function App() {
         <Route path="notifications" element={<Notifications />} /> */}
 
       </Route>
-
       <Route path="/compliance-audit" element={<ComplianceAndAuditRoutes />}>
         <Route path="dashboard" element={<ComplianceAndAuditDashboard />} />
 
