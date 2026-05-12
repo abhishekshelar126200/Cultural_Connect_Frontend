@@ -19,6 +19,12 @@ export const applyForProgram = (data) => {
     return httpCitizenClient.post("/applyProgram", data);
 };
 
+export const checkApplied = (citizenId, programId) => {
+    return httpCitizenClient.get(
+        `/checkApplication/${citizenId}/${programId}`
+    );
+};
+
 
 // ✅ Notification APIs - Use httpLoginClient to reach /api/notifications directly
 export const fetchNotifications = (userId) =>
