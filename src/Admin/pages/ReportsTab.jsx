@@ -8,7 +8,11 @@ const ReportsTab = () => {
   const [reportScope, setReportScope] = useState("PROGRAM");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
+  
+  // Search & Filter States
   const [searchReportId, setSearchReportId] = useState("");
+  const [filterScope, setFilterScope] = useState("ALL"); // ✅ NEW: State for filtering
+  
   const [loading, setLoading] = useState(true);
 
   const [alertPopup, setAlertPopup] = useState({ show: false, message: "", type: "success" });
@@ -45,6 +49,7 @@ const ReportsTab = () => {
       const res = await adminService.getReportById(searchReportId);
       if (res.data?.data) {
         setReports([res.data.data]); 
+        setFilterScope("ALL"); // Reset filter if searching by exact ID
       } else {
         setReports([]); 
       }
@@ -57,9 +62,19 @@ const ReportsTab = () => {
   const handleGenerateReport = async () => {
     try {
       setIsGenerating(true);
-      await adminService.generateReport(reportScope);
+      
+      // ✅ Capture the response to get the newly generated ID
+      const res = await adminService.generateReport(reportScope);
+      const newReportId = res.data?.data?.id || res.data?.data?.reportId || ""; 
+      
       await fetchData(); 
-      setAlertPopup({ show: true, message: `${reportScope} Report Generated Successfully!`, type: "success" });
+      
+      // ✅ Show the exact ID in the popup
+      setAlertPopup({ 
+        show: true, 
+        message: `${reportScope} Report Generated Successfully! ${newReportId ? `(ID #${newReportId})` : ""}`, 
+        type: "success" 
+      });
     } catch (error) {
       console.error("Failed to generate report", error);
       setAlertPopup({ show: true, message: "Error generating report. Please try again.", type: "error" });
@@ -86,7 +101,6 @@ const ReportsTab = () => {
     }
   };
 
-  // ✅ NEW: Auto-converts JSON array into a standard Excel/CSV file
   const handleDownloadCSV = (report) => {
     try {
       const metricsObj = JSON.parse(report.metrics);
@@ -97,15 +111,12 @@ const ReportsTab = () => {
         return;
       }
 
-      // Extract headers from the first object
       const headers = Object.keys(items[0]);
-      const csvRows = [headers.join(",")]; // Add header row
+      const csvRows = [headers.join(",")]; 
 
-      // Extract data rows
       items.forEach(item => {
         const row = headers.map(header => {
           let val = item[header] !== null ? String(item[header]) : "";
-          // Wrap in quotes if it contains a comma
           return val.includes(",") ? `"${val}"` : val;
         });
         csvRows.push(row.join(","));
@@ -130,10 +141,15 @@ const ReportsTab = () => {
     }
   };
 
+  // ✅ NEW: Compute which reports to display based on the active filter
+  const displayedReports = reports.filter(r => filterScope === "ALL" ? true : r.scope === filterScope);
+
   if (loading) return <div className="text-center mt-5"><div className="spinner-border text-primary"></div></div>;
 
   return (
     <section className="fade-in w-100">
+      
+      {/* Top Generator Controls */}
       <div className="d-flex flex-wrap justify-content-between align-items-end mb-4 pb-3 border-bottom">
         <div className="mb-3 mb-md-0">
           <h3 className="fw-bold mb-1 text-dark">Analytical Reports</h3>
@@ -160,6 +176,7 @@ const ReportsTab = () => {
         </div>
       </div>
 
+      {/* Stats Summary */}
       {dashboardSummary && (
         <div className="row g-3 mb-5">
           {[
@@ -178,22 +195,55 @@ const ReportsTab = () => {
         </div>
       )}
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      {/* ✅ UPDATED: Filter & Search Controls */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
         <h5 className="fw-bold text-dark mb-0">Generated Reports</h5>
-        <div className="input-group shadow-sm rounded-3 overflow-hidden" style={{ width: '300px' }}>
-          <input 
-            type="number" 
-            className="form-control border-0 bg-light px-3" 
-            placeholder="Search ID..." 
-            value={searchReportId}
-            onChange={(e) => setSearchReportId(e.target.value)}
-          />
-          <button className="btn btn-dark fw-bold px-3" onClick={handleSearchById}>Search</button>
+        
+        <div className="d-flex flex-wrap gap-2">
+          
+          {/* Scope Filter Dropdown */}
+          <select 
+            className="form-select border shadow-sm fw-bold text-secondary rounded-3 bg-white" 
+            style={{ width: '150px' }}
+            value={filterScope} 
+            onChange={(e) => setFilterScope(e.target.value)}
+          >
+            <option value="ALL">All Scopes</option>
+            <option value="PROGRAM">Program</option>
+            <option value="GRANT">Grant</option>
+            <option value="EVENT">Event</option>
+          </select>
+
+          {/* View All / Reset Button */}
+          <button 
+            className="btn btn-outline-secondary fw-bold px-3 shadow-sm bg-white" 
+            onClick={async () => {
+              setSearchReportId("");
+              setFilterScope("ALL");
+              fetchData();
+            }}
+            title="Reset Filters and View All"
+          >
+            ↻ View All
+          </button>
+          
+          {/* Search Bar */}
+          <div className="input-group shadow-sm rounded-3 overflow-hidden" style={{ width: '250px' }}>
+            <input 
+              type="number" 
+              className="form-control border-0 bg-light px-3" 
+              placeholder="Search ID..." 
+              value={searchReportId}
+              onChange={(e) => setSearchReportId(e.target.value)}
+            />
+            <button className="btn btn-dark fw-bold px-3" onClick={handleSearchById}>Search</button>
+          </div>
         </div>
       </div>
 
+      {/* Reports Grid */}
       <div className="row g-4">
-        {reports.map((report, index) => {
+        {displayedReports.map((report, index) => {
           const reportId = report.reportId || report.id; 
           const reportDate = report.generatedDate || report.createdAt ? new Date(report.generatedDate || report.createdAt).toISOString().split('T')[0] : "Just Now";
           
@@ -231,7 +281,6 @@ const ReportsTab = () => {
                     onClick={() => handleDownloadCSV(report)}
                     title="Download CSV"
                   >
-                    {/* SVG Download Icon */}
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                       <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
@@ -243,9 +292,9 @@ const ReportsTab = () => {
             </div>
           );
         })}
-        {reports.length === 0 && (
+        {displayedReports.length === 0 && (
           <div className="col-12 text-center py-5 bg-light rounded-4 border">
-            <h5 className="text-muted fw-bold">No reports found</h5>
+            <h5 className="text-muted fw-bold">No reports found matching criteria.</h5>
           </div>
         )}
       </div>
@@ -254,7 +303,7 @@ const ReportsTab = () => {
           MODALS SECTION 
           ============================================== */}
 
-      {/* 1. Modal for Viewing Metrics (NOW AS A TABLE) */}
+      {/* 1. Modal for Viewing Metrics */}
       {selectedReport && (
         <>
           <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1055 }}>
@@ -278,7 +327,6 @@ const ReportsTab = () => {
                       const parsed = JSON.parse(selectedReport.metrics);
                       const items = parsed.items || [];
                       
-                      // ✅ If we have an array of items, build an HTML table
                       if (items.length > 0) {
                         const headers = Object.keys(items[0]);
                         return (
@@ -300,7 +348,6 @@ const ReportsTab = () => {
                           </div>
                         );
                       } else {
-                        // Fallback if no items array is found
                         return (
                           <div className="p-4">
                             <p className="text-muted">No tabular data found for this report.</p>
@@ -321,7 +368,7 @@ const ReportsTab = () => {
         </>
       )}
 
-      {/* 2. Modal for Confirmation (Delete) */}
+      {/* 2. Confirm Delete Modal */}
       {confirmPopup.show && (
         <>
           <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1055 }}>
@@ -345,7 +392,7 @@ const ReportsTab = () => {
         </>
       )}
 
-      {/* 3. Modal for Success/Error Alerts */}
+      {/* 3. Alert Modal (Success/Error) */}
       {alertPopup.show && (
         <>
           <div className="modal show d-block" tabIndex="-1" style={{ zIndex: 1060 }}>

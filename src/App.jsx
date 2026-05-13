@@ -48,7 +48,7 @@ import CitizenApplications from './CitizenManagement/pages/CitizenApplications';
 import OfficerCitizens from './ProgramManagement/pages/OfficerCitizens';
 import ProgramApplications from './ProgramManagement/pages/ProgramApplications';
 import MyGrants from './ProgramManagement/pages/MyGrants';
-import ProgramDetails from './ComplianceAndAudit/pages/ProgramDetails';
+//import ProgramDetails from './ComplianceAndAudit/pages/ProgramDetails';
 export default function App() {
   return (
     <>
