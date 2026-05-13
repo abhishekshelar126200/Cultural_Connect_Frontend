@@ -22,6 +22,14 @@ export const getUserById = (userId) =>
     httpAdminClient.get(`/getUserById/${userId}`);
 
 
+// ✅ Register a new user as Admin
+export const registerUserByAdmin = (userData) => 
+    httpAdminClient.post("/userRegisterByAdmin", userData);
+
+// ✅ Delete a user by Admin
+export const deleteUserByAdmin = (userId) => 
+    httpAdminClient.delete(`/deleteUserByAdmin/${userId}`);
+
 // ✅ Reports APIs
 export const getDashboardSummary = () => 
     httpReportClient.get("/dashboard/summary");
