@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAllCompliance } from '../compliance.api';
 
-export default function AuditorDashboard() {
+export default function CompliancePrograms() {
   const [complianceList, setComplianceList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
