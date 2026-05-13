@@ -43,6 +43,7 @@ import EditResource from './EventAndResourceManagement/pages/EditResource';
 import CompliancePrograms from './ComplianceAndAudit/pages/CompliancePrograms';
 import AuditorFeedback from './ComplianceAndAudit/pages/AuditorFeedback';
 import AuditRoutes from './Routes/AuditRoutes';
+import ProgramDetails from './ComplianceAndAudit/pages/ProgramDetails';
 export default function App() {
   return (
     <>
@@ -77,6 +78,7 @@ export default function App() {
 
         <Route path="/audit" element={<AuditRoutes />}>
           <Route path='auditordashboard' element={<AuditorDashboard />} />
+          <Route path='programDetails/:complianceId/:programId' element={<ProgramDetails />} />
         </Route>
 
         {/* Program Manager */}
