@@ -6,7 +6,6 @@ import './App.css';
 // ✅ Existing imports (unchanged)
 import CitizenRoutes from './Routes/CitizenRoutes';
 import CitizenDashboard from './CitizenManagement/pages/CitizenDashboard';
-import MyGrants from './CitizenManagement/pages/MyGrants';
 import MyEvents from './CitizenManagement/pages/MyEvents';
 import Notifications from './CitizenManagement/pages/Notifications';
 
@@ -43,6 +42,12 @@ import EditResource from './EventAndResourceManagement/pages/EditResource';
 import CompliancePrograms from './ComplianceAndAudit/pages/CompliancePrograms';
 import AuditorFeedback from './ComplianceAndAudit/pages/AuditorFeedback';
 import AuditRoutes from './Routes/AuditRoutes';
+import CitizenPrograms from './CitizenManagement/components/CitizenPrograms';
+import ProgramDetails from './CitizenManagement/components/ProgramDetails';
+import CitizenApplications from './CitizenManagement/pages/CitizenApplications';
+import OfficerCitizens from './ProgramManagement/pages/OfficerCitizens';
+import ProgramApplications from './ProgramManagement/pages/ProgramApplications';
+import MyGrants from './ProgramManagement/pages/MyGrants';
 export default function App() {
   return (
     <>
@@ -57,6 +62,9 @@ export default function App() {
         {/* Citizen */}
         <Route path="/citizen" element={<CitizenRoutes />}>
           <Route path="dashboard" element={<CitizenDashboard />} />
+          <Route path="programs" element={<CitizenPrograms />} />
+          <Route path="program/:id" element={<ProgramDetails />} />
+          <Route path="applications" element={<CitizenApplications />} />
           <Route path="grants" element={<MyGrants />} />
           <Route path="events" element={<MyEvents />} />
           <Route path="notifications" element={<Notifications />} />
@@ -80,25 +88,31 @@ export default function App() {
         </Route>
 
         {/* Program Manager */}
-        <Route path="/programmanager" element={<ProgramManagerRoutes />}>
-          <Route path="dashboard" element={<ProgramManagerDashboard />} />
-          <Route path="programs" element={<ProgramManagerPrograms />} />
-          <Route path="create" element={<CreateProgram />} />
+       {/* Program Manager */}
+<Route path="/programmanager" element={<ProgramManagerRoutes />}>
+  <Route path="dashboard" element={<ProgramManagerDashboard />} />
+  <Route path="programs" element={<ProgramManagerPrograms />} />
 
-          {/* Events Drill-down */}
-          <Route path="programEvents/:programId" element={<EventDashboard />} />
-          <Route path="createEvent/:programId" element={<CreateEvent />} />
+  {/* ✅ ADD THIS (IMPORTANT) */}
+  <Route path="applications" element={<ProgramApplications />} />
 
-          {/* Resources Drill-down */}
-          <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
-          <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
-          <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
-          <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
-        </Route>
+  <Route path="create" element={<CreateProgram />} />
+
+  {/* Events Drill-down */}
+  <Route path="programEvents/:programId" element={<EventDashboard />} />
+  <Route path="createEvent/:programId" element={<CreateEvent />} />
+
+  {/* Resources Drill-down */}
+  <Route path="eventResources/:programId/:eventId" element={<ResourceDashboard />} />
+  <Route path="createResource/:programId/:eventId" element={<CreateResource />} />
+  <Route path="editEvent/:programId/:eventId" element={<EditEvent />} />
+  <Route path="editResource/:programId/:eventId/:resourceId" element={<EditResource />} />
+</Route>
 
         {/* Cultural Officer */}
         <Route path="/culturalofficer" element={<CulturalOfficerRoutes />}>
           <Route path="dashboard" element={<OfficerDashboard />} />
+          <Route path="citizens" element={<OfficerCitizens />} />
           <Route path="heritage" element={<HeritageDashboard />} />
           <Route path="createHeritageSite" element={<CreateHeritageSite />} />
           <Route path="heritageSiteDetails/:siteId" element={<HeritageSiteDetails />} />

@@ -25,7 +25,31 @@ export const checkApplied = (citizenId, programId) => {
     );
 };
 
+export const getApplicationsByCitizen = (citizenId) =>
+    httpCitizenClient.get(`/applications/${citizenId}`);
 
+export const getCitizenById = (id) =>
+    httpCitizenClient.get(`/${id}`);
+
+export const getDocuments = (citizenId) =>
+    httpCitizenClient.get(`/${citizenId}/documents`);
+
+export const uploadDocument = (citizenId, file, docType) => {
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("docType", docType);
+
+    return httpCitizenClient.post(
+        `/${citizenId}/documents`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+    );
+};
+
+export const deleteDocument = (docId) => {
+    return httpCitizenClient.delete(`/documents/${docId}`);
+};
 // ✅ Notification APIs - Use httpLoginClient to reach /api/notifications directly
 export const fetchNotifications = (userId) =>
     httpNotificationClient.get(`/user/${userId}`);
