@@ -95,7 +95,7 @@ const httpAdminlogClient = axios.create({
 });
  
 
-// --------------- Admin/audit logs  Client ---------------
+// --------------- Notifications  Client ---------------
 const httpNotificationClient = axios.create({
     baseURL: "http://localhost:8081/api/notifications",
     headers: {
@@ -103,6 +103,14 @@ const httpNotificationClient = axios.create({
     },
 });
  
+
+ // --------------- Report  Client ---------------
+const httpReportClient = axios.create({
+    baseURL: "http://localhost:8081/api/reports",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 
 // ✅ Attach interceptor ONLY to protected APIs
 const attachToken = (config) => {
@@ -125,6 +133,8 @@ httpAdminClient.interceptors.request.use(attachToken);
 httpNotificationClient.interceptors.request.use(attachToken);
 httpAdminlogClient.interceptors.request.use(attachToken);
 httpAuditClient.interceptors.request.use(attachToken);
+httpReportClient.interceptors.request.use(attachToken);
+
 export {
     httpCitizenClient,
     httpProgramClient,
@@ -137,8 +147,8 @@ export {
     httpComplianceClient,
     httpAdminClient,
     httpAdminlogClient,
-    httpNotificationClient
-};
     httpNotificationClient,
-    httpAuditClient
-}
+    httpAuditClient,
+    httpReportClient
+};
+
