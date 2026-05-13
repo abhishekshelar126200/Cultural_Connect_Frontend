@@ -22,6 +22,13 @@ export default function ProgramManagerSidebar() {
             <Link to="/programmanager/programs" className="btn btn-outline-secondary w-100 mb-2">
                 Programs
             </Link>
+            <Link
+                to="/programmanager/applications"
+                className="btn btn-outline-secondary w-100 mb-2"
+            >
+                Applications
+            </Link>
+
 
             <button className="btn btn-danger w-100 mt-5" onClick={handleLogout}>
                 Logout

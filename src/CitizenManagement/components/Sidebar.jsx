@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { fetchNotifications } from "../citizen.api";
+// import {}
 
 function Sidebar() {
     const [unreadCount, setUnreadCount] = useState(0);
@@ -46,6 +47,14 @@ function Sidebar() {
                         📚 Programs
                     </NavLink>
                 </li>
+                <li className="nav-item">
+    <NavLink 
+        to="/citizen/applications" 
+        className="nav-link text-white">
+        📄 My Applications
+    </NavLink>
+</li>
+
 
 
                 <li className="nav-item">
