@@ -28,14 +28,6 @@ function Sidebar() {
                     </NavLink>
                 </li>
 
-                <li className="nav-item">
-                    <NavLink
-                        to="/compliance-audit/auditorfeedback"
-                        className="nav-link text-white"
-                    >
-                        📝 Auditor Feedback
-                    </NavLink>
-                </li>
 
             </ul>
         </div>
