@@ -15,7 +15,7 @@ function AdminRoutes() {
                 {/* <Sidebar /> */}
 
                 <main className="flex-grow-1 bg-light">
-                    <div className="container py-4">
+                    <div className="container-fluid p-0">
                         <Outlet />
                     </div>
                 </main>

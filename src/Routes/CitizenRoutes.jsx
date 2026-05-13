@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "../CommonComponents/Navbar";
+import CitizenNavbar from "../CitizenManagement/components/CitizenNavbar";  
 import Sidebar from "../CitizenManagement/components/Sidebar";
 
 function CitizenRoutes() {
@@ -8,7 +8,7 @@ function CitizenRoutes() {
         <div className="min-vh-100 d-flex flex-column">
 
             {/* Top Navbar */}
-            <Navbar />
+            <CitizenNavbar />
 
             {/* Content Area */}
             <div className="d-flex flex-grow-1">
