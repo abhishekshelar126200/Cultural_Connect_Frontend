@@ -94,9 +94,17 @@ const httpAdminlogClient = axios.create({
     },
 });
 
-// --------------- Admin/audit logs  Client ---------------
+// --------------- Notifications  Client ---------------
 const httpNotificationClient = axios.create({
     baseURL: "http://localhost:8081/api/notifications",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+ // --------------- Report  Client ---------------
+const httpReportClient = axios.create({
+    baseURL: "http://localhost:8081/api/reports",
     headers: {
         "Content-Type": "application/json",
     },
@@ -123,6 +131,8 @@ httpAdminClient.interceptors.request.use(attachToken);
 httpNotificationClient.interceptors.request.use(attachToken);
 httpAdminlogClient.interceptors.request.use(attachToken);
 httpAuditClient.interceptors.request.use(attachToken);
+httpReportClient.interceptors.request.use(attachToken);
+
 export {
     httpCitizenClient,
     httpProgramClient,
@@ -136,5 +146,6 @@ export {
     httpAdminClient,
     httpAdminlogClient,
     httpNotificationClient,
-    httpAuditClient
+    httpAuditClient,
+    httpReportClient
 }
