@@ -72,7 +72,7 @@ export default function App() {
           <Route path='new-programs' element={<ComplianceAndAuditDashboard />} />
           <Route path='compliance-programs' element={<CompliancePrograms />} />
           <Route path='auditorfeedback' element={<AuditorFeedback />} />
-          
+
         </Route>
 
         <Route path="/audit" element={<AuditRoutes />}>
