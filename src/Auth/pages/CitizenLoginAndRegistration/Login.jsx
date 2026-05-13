@@ -201,9 +201,9 @@ function Login() {
                 } else if (role === "MANAGER") {
                     navigate("/programmanager/dashboard");
                 } else if (role === "COMPLIANCE") {
-                    navigate("/compliance-audit/dashboard");
+                    navigate("/compliance-audit/new-programs");
                 } else if (role === "AUDITOR") {
-                    navigate("/auditor/dashboard");
+                    navigate("/audit/auditordashboard");
                 } else {
                     navigate("/citizen/dashboard");  // default
                 }

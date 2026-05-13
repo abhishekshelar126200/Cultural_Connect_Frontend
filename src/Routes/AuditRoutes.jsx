@@ -1,9 +1,9 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../CommonComponents/Navbar";
-import Sidebar from "../CitizenManagement/components/Sidebar";
+import Sidebar from "../ComplianceAndAudit/Audit/Sidebar";
 
-function AuditorRoutes() {
+function AuditRoutes() {
     return (
         <div className="min-vh-100 d-flex flex-column">
 
@@ -12,7 +12,7 @@ function AuditorRoutes() {
 
             {/* Content Area */}
             <div className="d-flex flex-grow-1">
-                {/* <Sidebar /> */}
+                <Sidebar />
 
                 <main className="flex-grow-1 bg-light">
                     <div className="container py-4">
@@ -26,4 +26,4 @@ function AuditorRoutes() {
     );
 }
 
-export default AuditorRoutes;
+export default AuditRoutes;

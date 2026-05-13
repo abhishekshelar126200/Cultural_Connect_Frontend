@@ -1,93 +1,69 @@
-import React from "react";
+import React, { useState } from "react"; // 1. Add useState
 import { Link, useNavigate } from "react-router-dom";
-
+ 
 function Navbar() {
     const navigate = useNavigate();
-
+    const [showDropdown, setShowDropdown] = useState(false); // 2. Track state
+ 
     const token = localStorage.getItem("jwtToken");
     const isLoggedIn = !!token;
-
-    // ✅ Get user display name
-    const userName = localStorage.getItem("username"); // ✅ Retrieve username from localStorage    
-
+    const userName = localStorage.getItem("username");
+ 
     const handleLogout = () => {
-        // ✅ Clear auth data
-        localStorage.removeItem("jwtToken");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("userName");
-
+        localStorage.clear(); // Clears all at once
         navigate("/login");
     };
-
+ 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
             <div className="container">
-
-                {/* Brand */}
-                <Link className="navbar-brand fw-bold" to="/citizen">
-                    CultureConnect
-                </Link>
-
+                <Link className="navbar-brand fw-bold" to="/citizen">CultureConnect</Link>
+ 
                 <ul className="navbar-nav ms-auto align-items-center">
-
-                    {/* ✅ LOGGED OUT */}
                     {!isLoggedIn && (
                         <>
                             <li className="nav-item">
-                                <Link className="btn btn-outline-light" to="/login">
-                                    Login
-                                </Link>
+                                <Link className="btn btn-outline-light" to="/login">Login</Link>
                             </li>
-
                             <li className="nav-item ms-2">
-                                <Link className="btn btn-success" to="/register">
-                                    Register
-                                </Link>
+                                <Link className="btn btn-success" to="/register">Register</Link>
                             </li>
                         </>
                     )}
-
-                    {/* ✅ LOGGED IN */}
+ 
                     {isLoggedIn && (
                         <li className="nav-item dropdown">
-
-                            {/* ✅ Profile button with name */}
+                            {/* 3. Toggle state on click and remove data-bs-toggle */}
                             <button
-                                className="btn btn-outline-light dropdown-toggle"
-                                data-bs-toggle="dropdown"
+                                className={`btn btn-outline-light dropdown-toggle ${showDropdown ? 'show' : ''}`}
+                                onClick={() => setShowDropdown(!showDropdown)}
+                                type="button"
                             >
                                 👤 {userName || "Profile"}
                             </button>
-
-                            <ul className="dropdown-menu dropdown-menu-end">
-
+ 
+                            {/* 4. Conditionally apply the 'show' class */}
+                            <ul className={`dropdown-menu dropdown-menu-end ${showDropdown ? 'show' : ''}`}
+                                style={{ position: 'absolute', right: 0 }}>
                                 <li>
-                                    <Link className="dropdown-item" to="/profile">
+                                    <Link className="dropdown-item" to="/profile" onClick={() => setShowDropdown(false)}>
                                         View Profile
                                     </Link>
                                 </li>
-
+                                <li><hr className="dropdown-divider" /></li>
                                 <li>
-                                    <hr className="dropdown-divider" />
-                                </li>
-
-                                <li>
-                                    <button
-                                        className="dropdown-item text-danger"
-                                        onClick={handleLogout}
-                                    >
+                                    <button className="dropdown-item text-danger" onClick={handleLogout}>
                                         Logout
                                     </button>
                                 </li>
-
                             </ul>
                         </li>
                     )}
-
                 </ul>
             </div>
         </nav>
     );
 }
-
+ 
 export default Navbar;
+ 

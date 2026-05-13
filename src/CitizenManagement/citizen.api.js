@@ -1,4 +1,4 @@
-import { httpProgramClient, httpCitizenClient, httpLoginClient,httpNotificationClient } from "../Services/httpClient";
+import { httpProgramClient, httpCitizenClient, httpLoginClient, httpNotificationClient } from "../Services/httpClient";
 
 export const getPrograms = () =>
     httpCitizenClient.get("/getAllCitizenProgram");
@@ -30,8 +30,8 @@ export const checkApplied = (citizenId, programId) => {
 export const fetchNotifications = (userId) =>
     httpNotificationClient.get(`/user/${userId}`);
 
-export const markAsRead = (id) => 
+export const markAsRead = (id) =>
     httpNotificationClient.put(`/${id}/read`);
 
-export const deleteNotification = (id) => 
+export const deleteNotification = (id) =>
     httpNotificationClient.delete(`/${id}`);

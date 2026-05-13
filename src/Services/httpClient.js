@@ -63,14 +63,21 @@ const httpResourceClient = axios.create({
     },
 });
 
+
 // --------------- EventAndResource Client ---------------
-const httpNotificationClient = axios.create({
-    baseURL: "http://localhost:8081/api/notifications",
+const httpComplianceClient = axios.create({
+    baseURL: "http://localhost:8081/compliance",
     headers: {
         "Content-Type": "application/json",
     },
 });
-
+// --------------- EventAndResource Client ---------------
+const httpAuditClient = axios.create({
+    baseURL: "http://localhost:8081/compliance",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 // --------------- Admin  Client ---------------
 const httpAdminClient = axios.create({
     baseURL: "http://localhost:8081/cultureconnect",
@@ -82,6 +89,14 @@ const httpAdminClient = axios.create({
 // --------------- Admin/audit logs  Client ---------------
 const httpAdminlogClient = axios.create({
     baseURL: "http://localhost:8081/audit_log",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// --------------- Admin/audit logs  Client ---------------
+const httpNotificationClient = axios.create({
+    baseURL: "http://localhost:8081/api/notifications",
     headers: {
         "Content-Type": "application/json",
     },
@@ -103,10 +118,11 @@ httpFileUploadClient.interceptors.request.use(attachToken);
 httpPreservationClient.interceptors.request.use(attachToken);
 httpEventClient.interceptors.request.use(attachToken);
 httpResourceClient.interceptors.request.use(attachToken);
-httpNotificationClient.interceptors.request.use(attachToken);
+httpComplianceClient.interceptors.request.use(attachToken);
 httpAdminClient.interceptors.request.use(attachToken);
+httpNotificationClient.interceptors.request.use(attachToken);
 httpAdminlogClient.interceptors.request.use(attachToken);
-
+httpAuditClient.interceptors.request.use(attachToken);
 export {
     httpCitizenClient,
     httpProgramClient,
@@ -116,7 +132,9 @@ export {
     httpPreservationClient,
     httpEventClient,
     httpResourceClient,
-    httpNotificationClient,
+    httpComplianceClient,
     httpAdminClient,
-    httpAdminlogClient
-};
+    httpAdminlogClient,
+    httpNotificationClient,
+    httpAuditClient
+}
