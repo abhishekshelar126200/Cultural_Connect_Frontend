@@ -48,6 +48,7 @@ import CitizenApplications from './CitizenManagement/pages/CitizenApplications';
 import OfficerCitizens from './ProgramManagement/pages/OfficerCitizens';
 import ProgramApplications from './ProgramManagement/pages/ProgramApplications';
 import MyGrants from './ProgramManagement/pages/MyGrants';
+import ProgramDetails from './ComplianceAndAudit/pages/ProgramDetails';
 export default function App() {
   return (
     <>
@@ -80,11 +81,12 @@ export default function App() {
           <Route path='new-programs' element={<ComplianceAndAuditDashboard />} />
           <Route path='compliance-programs' element={<CompliancePrograms />} />
           <Route path='auditorfeedback' element={<AuditorFeedback />} />
-          
+
         </Route>
 
         <Route path="/audit" element={<AuditRoutes />}>
           <Route path='auditordashboard' element={<AuditorDashboard />} />
+          <Route path='programDetails/:complianceId/:programId' element={<ProgramDetails />} />
         </Route>
 
         {/* Program Manager */}

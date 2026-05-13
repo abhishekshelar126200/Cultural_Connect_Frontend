@@ -71,7 +71,13 @@ const httpComplianceClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+// --------------- EventAndResource Client ---------------
+const httpAuditClient = axios.create({
+    baseURL: "http://localhost:8081/compliance",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 // --------------- Admin  Client ---------------
 const httpAdminClient = axios.create({
     baseURL: "http://localhost:8081/cultureconnect",
@@ -88,6 +94,7 @@ const httpAdminlogClient = axios.create({
     },
 });
  
+
 // --------------- Admin/audit logs  Client ---------------
 const httpNotificationClient = axios.create({
     baseURL: "http://localhost:8081/api/notifications",
@@ -96,6 +103,7 @@ const httpNotificationClient = axios.create({
     },
 });
  
+
 // ✅ Attach interceptor ONLY to protected APIs
 const attachToken = (config) => {
     const token = localStorage.getItem("jwtToken");
@@ -116,6 +124,7 @@ httpComplianceClient.interceptors.request.use(attachToken);
 httpAdminClient.interceptors.request.use(attachToken);
 httpNotificationClient.interceptors.request.use(attachToken);
 httpAdminlogClient.interceptors.request.use(attachToken);
+httpAuditClient.interceptors.request.use(attachToken);
 export {
     httpCitizenClient,
     httpProgramClient,
@@ -130,3 +139,6 @@ export {
     httpAdminlogClient,
     httpNotificationClient
 };
+    httpNotificationClient,
+    httpAuditClient
+}
