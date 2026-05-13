@@ -1,8 +1,7 @@
-// src/EventAndResourceManagement/Event.api.js
 import { httpEventClient } from "../Services/httpClient"; 
 
 export const getAllEvents = () => 
-    httpEventClient.get("/getallevents"); // ❌ Removed "/api/events" prefix
+    httpEventClient.get("/getallevents");
 
 export const deleteEvent = (id) => 
     httpEventClient.delete(`/deleteevent/${id}`);
@@ -10,6 +9,7 @@ export const deleteEvent = (id) =>
 export const getEventById = (id) => 
     httpEventClient.get(`/geteventbyid/${id}`);
 
+// Added this export to resolve CreateEvent.jsx error
 export const createEvent = (data) => 
     httpEventClient.post("/addevent", data);
 

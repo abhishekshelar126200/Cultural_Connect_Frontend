@@ -71,6 +71,22 @@ const httpNotificationClient = axios.create({
     },
 });
 
+// --------------- Admin  Client ---------------
+const httpAdminClient = axios.create({
+    baseURL: "http://localhost:8081/cultureconnect",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// --------------- Admin/audit logs  Client ---------------
+const httpAdminlogClient = axios.create({
+    baseURL: "http://localhost:8081/audit_log",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
 // ✅ Attach interceptor ONLY to protected APIs
 const attachToken = (config) => {
     const token = localStorage.getItem("jwtToken");
@@ -88,6 +104,8 @@ httpPreservationClient.interceptors.request.use(attachToken);
 httpEventClient.interceptors.request.use(attachToken);
 httpResourceClient.interceptors.request.use(attachToken);
 httpNotificationClient.interceptors.request.use(attachToken);
+httpAdminClient.interceptors.request.use(attachToken);
+httpAdminlogClient.interceptors.request.use(attachToken);
 
 export {
     httpCitizenClient,
@@ -98,5 +116,7 @@ export {
     httpPreservationClient,
     httpEventClient,
     httpResourceClient,
-    httpNotificationClient
+    httpNotificationClient,
+    httpAdminClient,
+    httpAdminlogClient
 };
