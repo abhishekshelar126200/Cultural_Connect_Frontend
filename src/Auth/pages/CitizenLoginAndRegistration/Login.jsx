@@ -186,12 +186,15 @@ function Login() {
                 const userId = payload.userId;   // ✅ IMPORTANT
                 const username = payload.Username;
                 localStorage.setItem("userId", userId); // ✅ Store userId for later use
-                localStorage.setItem("username", username); // ✅ Store username for later use  
+                localStorage.setItem("username", username); // ✅ Store username for later use 
+                localStorage.setItem("status", response.data.status);
+ 
                 const role = payload.role;   // ✅ IMPORTANT
 
                 console.log("User Role:", role);
                 console.log("User ID:", userId);
                 console.log("Username:", username);
+                console.log("Account Status:", response.data.status);
 
                 // ✅ redirect based on role
                 if (role === "ADMIN") {

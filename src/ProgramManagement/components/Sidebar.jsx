@@ -21,7 +21,7 @@ function Sidebar() {
 
                 <li className="nav-item">
                     <NavLink
-                        to="/culturalofficer/allcitizens"
+                       to="/culturalofficer/citizens"
                         className="nav-link text-white"
                     >
                         💰 Citizen Management
