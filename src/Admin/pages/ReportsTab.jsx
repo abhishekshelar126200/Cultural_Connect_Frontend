@@ -5,7 +5,7 @@ const ReportsTab = () => {
   const [reports, setReports] = useState([]);
   const [dashboardSummary, setDashboardSummary] = useState(null);
   
-  const [reportScope, setReportScope] = useState("PROGRAM");
+  const [reportScope, setReportScope] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   
@@ -155,21 +155,23 @@ const ReportsTab = () => {
           <h3 className="fw-bold mb-1 text-dark">Analytical Reports</h3>
           <p className="text-muted small mb-0">Performance summaries and metric disbursements.</p>
         </div>
-        <div className="d-flex gap-2">
+       <div className="d-flex gap-2">
           <select 
-            className="form-select bg-light border-0 shadow-sm fw-bold text-dark rounded-3" 
+            className={`form-select border-0 shadow-sm fw-bold rounded-3 ${!reportScope ? 'text-muted bg-white border' : 'bg-light text-dark'}`} 
             value={reportScope} 
             onChange={(e) => setReportScope(e.target.value)}
             disabled={isGenerating}
           >
-            <option value="PROGRAM">Program Scope</option>
-            <option value="GRANT">Grant Scope</option>
-            <option value="EVENT">Event Scope</option>
+            <option value="">Select a Scope.</option> 
+            <option value="PROGRAM">Program </option>
+            <option value="GRANT">Grant </option>
+            <option value="EVENT">Event </option>
           </select>
+          
           <button 
             className="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2 rounded-3 px-4" 
             onClick={handleGenerateReport}
-            disabled={isGenerating}
+            disabled={isGenerating || !reportScope} 
           >
             {isGenerating ? <><span className="spinner-border spinner-border-sm"></span> Generating...</> : "Generate"}
           </button>
@@ -263,7 +265,7 @@ const ReportsTab = () => {
                 <div className="mb-3 mt-1">
                   <span className="badge bg-dark text-white px-3 py-2 rounded-pill fw-bold shadow-sm">ID #{reportId}</span>
                 </div>
-                <h4 className="fw-black text-dark tracking-tight">Scope: {report.scope}</h4>
+                <h4 className="fw-black text-dark tracking-tight"> {report.scope}</h4>
                 <div className="d-flex align-items-center gap-2 mb-4 mt-2">
                   <span className="badge bg-light text-secondary border">Generated: {reportDate}</span>
                 </div>

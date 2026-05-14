@@ -74,6 +74,7 @@ export default function App() {
         {/* Admin */}
         <Route path="/admin" element={<AdminRoutes />}>
           <Route path="dashboard" element={<AdminDashboard />} />
+          
         </Route>
 
         {/* Compliance & Audit */}
