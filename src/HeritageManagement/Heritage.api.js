@@ -14,3 +14,12 @@ export const getHeritageSiteById = (siteId) =>
 
 export const deleteHeritageSite = (siteId) =>
     httpHeritageClient.delete(`/deleteSite/${siteId}`);
+
+export const updateSiteStatus = (siteId, status) =>
+    httpHeritageClient.put(
+        `/updateSiteStatus/${siteId}`,
+        null, // ✅ no request body
+        {
+            params: { status } // ✅ send as query parameter
+        }
+    );
