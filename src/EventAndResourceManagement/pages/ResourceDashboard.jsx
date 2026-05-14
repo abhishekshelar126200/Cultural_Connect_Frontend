@@ -37,7 +37,7 @@ export default function ResourceDashboard() {
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h3 className="fw-bold text-success">Event Resources</h3>
                 <Link 
-                    to={`/programmanager/addResource/${programId}/${eventId}`} 
+                    to={`/programmanager/createResource/${programId}/${eventId}`}
                     className="btn btn-success"
                 >
                     ➕ Add Resource
