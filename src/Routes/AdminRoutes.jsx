@@ -1,27 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "../CommonComponents/Navbar";
-import Sidebar from "../CitizenManagement/components/Sidebar";
 
 function AdminRoutes() {
     return (
-        <div className="min-vh-100 d-flex flex-column">
-
-            {/* Top Navbar */}
-            <Navbar />
-
-            {/* Content Area */}
-            <div className="d-flex flex-grow-1">
-                {/* <Sidebar /> */}
-
-                <main className="flex-grow-1 bg-light">
-                    <div className="container-fluid p-0">
-                        <Outlet />
-                    </div>
-                </main>
-            </div>
-
-            {/* <Footer /> */}
+        // ✅ Removed Navbar and changed to a simple full-screen wrapper
+        <div className="vw-100 vh-100 m-0 p-0 overflow-hidden bg-light">
+            <Outlet />
         </div>
     );
 }
