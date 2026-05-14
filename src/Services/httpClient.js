@@ -44,7 +44,7 @@ const httpPreservationClient = axios.create({
 
 // --------------- Upload File Client ---------------
 const httpFileUploadClient = axios.create({
-    baseURL: "http://localhost:8081//api/events",
+    baseURL: "http://localhost:8081/api/heritage-sites",
 });
 
 // --------------- EventAndResource Client ---------------
