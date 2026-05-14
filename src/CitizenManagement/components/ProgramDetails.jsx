@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProgramById, applyForProgram, checkApplied } from "../citizen.api";
+import { getCitizenById } from "../citizen.api";
 import { httpEventClient } from "../../Services/httpClient";
 
 export default function ProgramDetails() {
@@ -10,11 +11,14 @@ export default function ProgramDetails() {
     const [program, setProgram] = useState({});
     const [events, setEvents] = useState([]);
     const [applied, setApplied] = useState(false);
+    const [citizenStatus, setCitizenStatus] = useState("");
+
 
     useEffect(() => {
-        loadData();
-        checkIfApplied();
-    }, []);
+    loadData();
+    checkIfApplied();
+    fetchCitizenStatus(); // ✅ ADD THIS
+}, []);
 
     // ✅ CHECK IF ALREADY APPLIED (IMPORTANT)
     const checkIfApplied = async () => {
@@ -31,6 +35,18 @@ export default function ProgramDetails() {
             console.error("Check applied error:", err);
         }
     };
+    const fetchCitizenStatus = async () => {
+    try {
+        const citizenId = localStorage.getItem("userId");
+        const res = await getCitizenById(citizenId);
+
+        setCitizenStatus(res.data.status); // ✅ from citizen table
+
+    } catch (err) {
+        console.error("Status fetch error:", err);
+    }
+};
+
 
     // ✅ LOAD PROGRAM + EVENTS
     const loadData = async () => {
@@ -38,16 +54,18 @@ export default function ProgramDetails() {
             const programRes = await getProgramById(id);
             setProgram(programRes.data);
 
-            // ✅ Fetch event IDs
             const eventIdsRes = await httpEventClient.get(`/program/${id}`);
             const eventIds = eventIdsRes.data;
 
-            // ✅ Fetch event details
-            const eventDetails = await Promise.all(
-                eventIds.map(eid => httpEventClient.get(`/${eid}`))
+            const eventResults = await Promise.allSettled(
+                eventIds.map(eid => httpEventClient.get(`/geteventbyid/${eid}`))
             );
 
-            setEvents(eventDetails.map(e => e.data));
+            const validEvents = eventResults
+                .filter(res => res.status === "fulfilled")
+                .map(res => res.value.data);
+
+            setEvents(validEvents);
 
         } catch (err) {
             console.error("Load data error:", err);
@@ -55,46 +73,60 @@ export default function ProgramDetails() {
     };
 
     // ✅ APPLY FUNCTION
-    const handleApply = async () => {
+   const handleApply = async () => {
 
-        const confirm = window.confirm("Are you sure you want to apply for this program?");
-        if (!confirm) return;
+    // ✅ ✅ NEW: CHECK CITIZEN STATUS FIRST
+    if (citizenStatus !== "ACTIVE") {
+        alert("⚠️ Please upload your documents to activate your account before applying.");
+        return;
+    }
 
-        try {
-            const citizenId = localStorage.getItem("userId");
+    const confirm = window.confirm("Are you sure you want to apply for this program?");
+    if (!confirm) return;
 
-            const requestData = {
-                citizenId: Number(citizenId),
-                programId: Number(id)
-            };
+    try {
+        const citizenId = localStorage.getItem("userId");
 
-            const res = await applyForProgram(requestData);
+        const requestData = {
+            citizenId: Number(citizenId),
+            programId: Number(id)
+        };
 
-            console.log(res.data);
+        const res = await applyForProgram(requestData);
 
-            // ✅ SET APPLIED TRUE
-            setApplied(true);
+        console.log(res.data);
 
-            alert("✅ Application Submitted Successfully!");
+        // ✅ SET APPLIED TRUE
+        setApplied(true);
 
-        } catch (err) {
-            console.error("Apply error:", err);
+        alert("✅ Application Submitted Successfully!");
 
-            if (err.response) {
+    } catch (err) {
+        console.error("Apply error:", err);
 
-                if (err.response.status === 400) {
-                    alert("✅ Already Applied");
-                    setApplied(true);   // ✅ CRITICAL FIX
-                } else {
-                    alert(err.response.data);
-                }
+        if (err.response) {
 
-            } else {
-                alert("Server error");
+            // ✅ Already applied case
+            if (err.response.status === 400) {
+                alert("✅ Already Applied");
+                setApplied(true);
             }
-        }
 
-    };
+            // ✅ NEW: Backend inactive check (extra safety)
+            else if (err.response.status === 403) {
+                alert("⚠️ Your account is inactive. Please upload documents.");
+            }
+
+            else {
+                alert(err.response.data);
+            }
+
+        } else {
+            alert("Server error");
+        }
+    }
+};
+
 
     return (
         <div className="container">
@@ -124,14 +156,25 @@ export default function ProgramDetails() {
             ))}
 
             {/* ✅ APPLY BUTTON */}
-            <button
-                className="btn btn-success position-fixed"
-                style={{ bottom: "20px", right: "20px" }}
-                onClick={handleApply}
-                disabled={applied}
-            >
-                {applied ? "Already Applied ✅" : "Apply Program"}
-            </button>
+            
+<button
+            className={`btn position-fixed ${
+                citizenStatus !== "ACTIVE"
+                    ? "btn-secondary"
+                    : "btn-success"
+            }`}
+            style={{ bottom: "20px", right: "20px" }}
+            onClick={handleApply}
+            disabled={applied || citizenStatus !== "ACTIVE"}
+        >
+            {applied
+                ? "Already Applied ✅"
+                : citizenStatus !== "ACTIVE"
+                    ? "Inactive Account ❌"
+                    : "Apply Program"
+            }
+        </button>
+
 
         </div>
     );

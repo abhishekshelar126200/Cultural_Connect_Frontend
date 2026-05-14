@@ -5,3 +5,7 @@ export const registerCitizen = (citizenData) =>
 
 export const loginCitizen = (citizenData) =>
     httpLoginClient.post("/login", citizenData);
+
+export const getCitizenById = (citizenId) => {
+    return axios.get(`http://localhost:8081/api/citizens/${citizenId}`);
+};

@@ -1,5 +1,5 @@
 // Import the clients that have the TOKEN interceptor attached
-import { httpAdminClient, httpAdminlogClient } from "../Services/httpClient";
+import { httpAdminClient, httpAdminlogClient, httpReportClient } from "../Services/httpClient";
 
 // ✅ Fetch all users (Using AdminClient because it sends the Bearer Token)
 export const getAllUsers = () => 
@@ -20,3 +20,32 @@ export const getAuditLogsByUserId = (userId) =>
 // ✅ Get user by ID
 export const getUserById = (userId) => 
     httpAdminClient.get(`/getUserById/${userId}`);
+
+
+// ✅ Register a new user as Admin
+export const registerUserByAdmin = (userData) => 
+    httpAdminClient.post("/userRegisterByAdmin", userData);
+
+// ✅ Delete a user by Admin
+export const deleteUserByAdmin = (userId) => 
+    httpAdminClient.delete(`/deleteUserByAdmin/${userId}`);
+
+// ✅ Reports APIs
+export const getDashboardSummary = () => 
+    httpReportClient.get("/dashboard/summary");
+
+// REMOVE the "/" to prevent double-slashes (e.g., /api/reports//)
+export const getAllReports = () => 
+    httpReportClient.get(""); 
+
+// Use Axios 'params' object instead of string interpolation for the POST request
+export const generateReport = (scope) => 
+    httpReportClient.post("/generate", null, { 
+        params: { scope: scope } 
+    });
+
+export const getReportById = (id) => 
+    httpReportClient.get(`/${id}`);
+
+export const deleteReport = (id) => 
+    httpReportClient.delete(`/delete/${id}`);
