@@ -14,6 +14,7 @@ export default function CreateHeritageSite() {
     const [preview, setPreview] = useState(null);
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +32,7 @@ export default function CreateHeritageSite() {
         e.preventDefault();
         setError("");
         setSuccess("");
+        setLoading(true);
 
         try {
             let fileUri = "";
@@ -52,115 +54,131 @@ export default function CreateHeritageSite() {
             setPreview(null);
         } catch (err) {
             setError("❌ Failed to create heritage site");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container py-5">
-            <div className="row justify-content-center">
-                <div className="col-lg-7">
+        <div className="container py-4">
+            <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div className="row g-0">
 
-                    <div className="card border-0 shadow-lg rounded-4">
-                        <div className="card-body p-5">
+                    {/* Left Column: Form Details */}
+                    <div className="col-lg-7 p-4 p-md-5 bg-white">
+                        <div className="mb-4">
+                            <h2 className="fw-bold text-dark">🏛️ Add Heritage Site</h2>
+                            <p className="text-muted">Register a new cultural landmark in the system.</p>
+                        </div>
 
-                            {/* Header */}
-                            <div className="text-center mb-4">
-                                <h2 className="fw-bold text-primary">🏛️ Add Heritage Site</h2>
-                                <p className="text-muted">Fill details to create a new heritage location</p>
-                            </div>
+                        {success && <div className="alert alert-success border-0 small">{success}</div>}
+                        {error && <div className="alert alert-danger border-0 small">{error}</div>}
 
-                            {success && <div className="alert alert-success text-center">{success}</div>}
-                            {error && <div className="alert alert-danger text-center">{error}</div>}
-
-                            <form onSubmit={handleSubmit}>
-
-                                {/* Name */}
-                                <div className="mb-3">
-                                    <label className="form-label fw-semibold">Heritage Name</label>
+                        <form onSubmit={handleSubmit}>
+                            <div className="row">
+                                <div className="col-md-6 mb-3">
+                                    <label className="form-label fw-semibold small">Heritage Name</label>
                                     <input
                                         type="text"
-                                        className="form-control rounded-3"
+                                        className="form-control bg-light border-0 py-2"
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        placeholder="Enter heritage name"
+                                        placeholder="e.g. Ancient Temple"
                                         required
                                     />
                                 </div>
-
-                                {/* Location */}
-                                <div className="mb-3">
-                                    <label className="form-label fw-semibold">Location</label>
+                                <div className="col-md-6 mb-3">
+                                    <label className="form-label fw-semibold small">Location</label>
                                     <input
                                         type="text"
-                                        className="form-control rounded-3"
+                                        className="form-control bg-light border-0 py-2"
                                         name="location"
                                         value={formData.location}
                                         onChange={handleChange}
-                                        placeholder="Enter location"
+                                        placeholder="City, Country"
                                         required
                                     />
                                 </div>
+                            </div>
 
-                                {/* Description */}
-                                <div className="mb-3">
-                                    <label className="form-label fw-semibold">Description</label>
-                                    <textarea
-                                        className="form-control rounded-3"
-                                        name="description"
-                                        rows="3"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        placeholder="Write short description..."
-                                        required
-                                    />
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold small">Status</label>
+                                <select
+                                    className="form-select bg-light border-0 py-2"
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleChange}
+                                >
+                                    <option value="Active">🟢 Active / Open</option>
+                                    <option value="Inactive">🔴 Inactive / Restricted</option>
+                                </select>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label fw-semibold small">Detailed Description</label>
+                                <textarea
+                                    className="form-control bg-light border-0"
+                                    name="description"
+                                    rows="5"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    placeholder="Provide historical context and significance..."
+                                    required
+                                />
+                            </div>
+
+                            <div className="d-grid">
+                                <button
+                                    className="btn btn-dark btn-lg py-3 rounded-3 fw-bold"
+                                    type="submit"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Processing..." : "Confirm & Save Site"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Right Column: Image Upload & Visual Preview */}
+                    <div className="col-lg-5 p-4 p-md-5 bg-light border-start d-flex flex-column justify-content-center">
+                        <div className="text-center mb-4">
+                            <h5 className="fw-bold">Visual Representation</h5>
+                            <p className="small text-muted">Upload a high-quality photo of the site</p>
+                        </div>
+
+                        <div
+                            className="border border-2 border-dashed rounded-4 d-flex align-items-center justify-content-center bg-white position-relative overflow-hidden"
+                            style={{ minHeight: "300px", borderStyle: "dashed !important", borderColor: "#dee2e6 !important" }}
+                        >
+                            {preview ? (
+                                <img
+                                    src={preview}
+                                    alt="Preview"
+                                    className="w-100 h-100 object-fit-cover position-absolute"
+                                />
+                            ) : (
+                                <div className="text-center p-4">
+                                    <div className="display-4 text-muted mb-2">📸</div>
+                                    <p className="text-muted small mb-0">No image selected</p>
                                 </div>
+                            )}
+                        </div>
 
-                                {/* Status */}
-                                <div className="mb-3">
-                                    <label className="form-label fw-semibold">Status</label>
-                                    <select
-                                        className="form-select rounded-3"
-                                        name="status"
-                                        value={formData.status}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-
-                                {/* Image Upload */}
-                                <div className="mb-4">
-                                    <label className="form-label fw-semibold">Heritage Image</label>
-                                    <input
-                                        type="file"
-                                        className="form-control"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                    />
-
-                                    {preview && (
-                                        <div className="mt-3 text-center">
-                                            <img
-                                                src={preview}
-                                                alt="Preview"
-                                                className="img-fluid rounded-3 shadow-sm"
-                                                style={{ maxHeight: "200px" }}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Submit */}
-                                <div className="d-grid">
-                                    <button className="btn btn-primary btn-lg rounded-3 shadow-sm">
-                                        ➕ Create Heritage Site
-                                    </button>
-                                </div>
-
-                            </form>
-
+                        <div className="mt-4">
+                            <input
+                                type="file"
+                                id="siteImage"
+                                className="d-none"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                            <label htmlFor="siteImage" className="btn btn-outline-primary w-100 py-2 rounded-3 fw-semibold">
+                                {preview ? "Change Photo" : "Choose Photo"}
+                            </label>
+                            <p className="text-center x-small text-muted mt-2" style={{ fontSize: '0.75rem' }}>
+                                Supported formats: JPG, PNG (Max 5MB)
+                            </p>
                         </div>
                     </div>
 

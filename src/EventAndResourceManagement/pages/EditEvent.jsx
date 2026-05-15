@@ -20,28 +20,34 @@ export default function EditEvent() {
         const fetchEvent = async () => {
             try {
                 const res = await getEventById(eventId);
-                // Map API response to local state
-                setFormData({
-                    title: res.data.title || "",
-                    location: res.data.location || "",
-                    date: res.data.date || "",
-                    participants: res.data.participants || 0,
-                    status: res.data.status || "PENDING"
-                });
+                if (res.data) {
+                    setFormData({
+                        title: res.data.title || "",
+                        location: res.data.location || "",
+                        date: res.data.date || "",
+                        participants: res.data.participants || 0,
+                        status: res.data.status || "PENDING"
+                    });
+                }
             } catch (err) {
                 console.error("Fetch error:", err);
-                alert("Failed to load event data.");
+                // Handle the 500 error gracefully
+                if (err.response?.status === 500) {
+                    alert("Backend Error (500): The server crashed while fetching this event. Check your Spring Boot logs.");
+                } else {
+                    alert("Failed to load event data. Redirecting...");
+                    navigate(-1);
+                }
             } finally {
                 setLoading(false);
             }
         };
         fetchEvent();
-    }, [eventId]);
+    }, [eventId, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Construct payload with required ID types for Spring Boot
         const payload = {
             ...formData,
             programId: Number(programId), 
@@ -51,10 +57,11 @@ export default function EditEvent() {
         try {
             await updateEvent(eventId, payload);
             alert("Event updated successfully!");
+            // Navigating back to the dashboard
             navigate(`/programmanager/programEvents/${programId}`);
         } catch (err) {
             console.error("Update failed:", err.response?.data);
-            alert("Update failed. Check console for details.");
+            alert("Update failed. Make sure all fields are valid.");
         }
     };
 
@@ -65,7 +72,7 @@ export default function EditEvent() {
             <div className="card shadow-sm border-0 mx-auto" style={{ maxWidth: "600px" }}>
                 <div className="card-header bg-white border-0 pt-4 text-center">
                     <h3 className="fw-bold text-primary">Edit Event</h3>
-                    <p className="text-muted small">Update details for Event #{eventId}</p>
+                    <p className="text-muted small">Updating Event ID: {eventId}</p>
                 </div>
                 <div className="card-body p-4">
                     <form onSubmit={handleSubmit}>
@@ -125,11 +132,11 @@ export default function EditEvent() {
 
                         <div className="d-grid gap-2">
                             <button type="submit" className="btn btn-primary py-2 shadow-sm">
-                                Save Changes
+                                Update Event
                             </button>
                             <button 
                                 type="button" 
-                                className="btn btn-light py-2" 
+                                className="btn btn-outline-secondary py-2" 
                                 onClick={() => navigate(-1)}
                             >
                                 Cancel
