@@ -1,114 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { fetchNotifications, markAsRead } from "../citizen.api";
 import { useNavigate } from "react-router-dom";
-
-function Navbar() {
-
+import "../../style/ManagerNavbar.css"
+function ManagerNavbar() {
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+    const userName = localStorage.getItem("username") || "User";
 
-    const [showNotif, setShowNotif] = useState(false);
-    const [notifications, setNotifications] = useState([]);
-
-    const citizenId = localStorage.getItem("userId");
-
-    // ✅ LOAD NOTIFICATIONS
-    const loadNotifications = async () => {
-        if (!citizenId) return;
-
-        const res = await fetchNotifications(citizenId);
-
-        setNotifications(
-            (res.data.data || []).sort(
-                (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-            )
-        );
+    const logout = () => {
+        localStorage.clear();
+        navigate("/login");
     };
 
     useEffect(() => {
-        loadNotifications();
+        const handleClick = (e) => {
+            if (!e.target.closest(".profile") && !e.target.closest(".dropdown")) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("click", handleClick);
+        return () => document.removeEventListener("click", handleClick);
     }, []);
 
-    // ✅ MARK ALL AS READ WHEN OPENED
-    const handleBellClick = async () => {
-
-        setShowNotif(!showNotif);
-
-        // mark all as read
-        notifications.forEach(async (n) => {
-            if (n.status === "SENT") {
-                await markAsRead(n.notificationId);
-            }
-        });
-
-        // reload after marking
-        loadNotifications();
-    };
-
-    // ✅ COUNT UNREAD
-    const unreadCount = notifications.filter(n => n.status === "SENT").length;
-
     return (
-        <nav className="navbar navbar-dark bg-dark px-3">
+    <div className="manager-navbar">
 
-            <h5 className="text-white">CultureConnect</h5>
+        {/* ✅ Title is now first child, so it goes to the left */}
+        <div className="nav-center">
+            Dashboard
+        </div>
 
-            <div className="d-flex align-items-center gap-3">
-
-                {/* ✅ NOTIFICATION BELL */}
-                <div className="position-relative">
-
-                    <button
-                        className="btn btn-outline-warning"
-                        onClick={handleBellClick}
-                    >
-                        🔔
-                    </button>
-
-                    {unreadCount > 0 && (
-                        <span className="badge bg-danger position-absolute top-0 start-100 translate-middle">
-                            {unreadCount}
-                        </span>
-                    )}
-
-                    {/* ✅ DROPDOWN POPUP */}
-                    {showNotif && (
-                        <div
-                            className="position-absolute bg-white shadow p-3 rounded"
-                            style={{ right: 0, width: "300px", zIndex: 1000 }}
-                        >
-                            <h6>Notifications</h6>
-
-                            {notifications.length === 0 && (
-                                <p className="text-muted">No notifications</p>
-                            )}
-
-                            {notifications.slice(0, 5).map(n => (
-                                <div key={n.notificationId} className="border-bottom mb-2 pb-2">
-                                    <small>{n.message}</small>
-                                </div>
-                            ))}
-
-                        </div>
-                    )}
-
-                </div>
-
-                {/* ✅ USER */}
-                <div className="text-white">
-                    {localStorage.getItem("username")}
-                </div>
-
-                {/* ✅ LOGOUT */}
-                <button className="btn btn-danger" onClick={() => {
-                    localStorage.clear();
-                    navigate("/login");
-                }}>
-                    Logout
-                </button>
-
+        {/* ✅ Right section containing status and profile */}
+        <div className="nav-right">
+            <div className="status">
+                ● System Live
             </div>
-        </nav>
-    );
+
+            <div className="profile" onClick={() => setOpen(!open)}>
+                👤 {userName}
+            </div>
+
+            <div className={`dropdown ${open ? "show" : ""}`}>
+                <div>View Profile</div>
+                <hr />
+                <div className="logout-btn" onClick={logout}>
+                    Logout
+                </div>
+            </div>
+        </div>
+    </div>
+);
 }
 
-export default Navbar;
+export default ManagerNavbar;

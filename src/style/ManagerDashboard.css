@@ -1,0 +1,110 @@
+.dashboard-wrapper {
+    padding: 20px;
+    font-family: 'Inter', sans-serif; /* Modern font */
+}
+
+.dashboard-header h2 {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.dashboard-header p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+/* ✅ Stats Grid using Modern CSS Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+}
+
+.stat-label {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+/* ✅ Specialized Color Cards */
+.stat-card.approved {
+    background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+    border-left: 5px solid #10b981;
+}
+
+.stat-card.rejected {
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    border-left: 5px solid #ef4444;
+}
+
+/* ✅ Chart Styling */
+.content-grid {
+    display: flex;
+    justify-content: center; /* Centers the chart card horizontally */
+    margin-top: 20px;
+}
+
+.chart-container {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    
+    /* ✅ Controls the size of the "card" */
+    width: 100%;
+    max-width: 400px; 
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the chart inside the card */
+}
+.chart-container h5 {
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 25px;
+}
+
+.pie-wrapper {
+    /* ✅ This is the actual size of the Pie Chart */
+    width: 280px; 
+    height: 280px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+.chart-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 20px;
+    align-self: flex-start; /* Keeps title left-aligned inside the card */
+}

@@ -1,21 +1,12 @@
 import { useEffect, useState } from "react";
 import { getAllPrograms, getAllApplications } from "../Services/programManager.api";
 import { Pie } from "react-chartjs-2";
+import "../../style/ManagerDashboard.css";
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
-
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function ProgramManagerDashboard() {
-
-  const [programs, setPrograms] = useState([]);
-  const [applications, setApplications] = useState([]);
-
   const [stats, setStats] = useState({
     totalPrograms: 0,
     totalApplications: 0,
@@ -29,12 +20,8 @@ export default function ProgramManagerDashboard() {
   }, []);
 
   const loadData = async () => {
-
     const programRes = await getAllPrograms();
     const appRes = await getAllApplications();
-
-    setPrograms(programRes.data);
-    setApplications(appRes.data);
 
     const approved = appRes.data.filter(a => a.status === "APPROVED").length;
     const rejected = appRes.data.filter(a => a.status === "REJECTED").length;
@@ -49,65 +36,79 @@ export default function ProgramManagerDashboard() {
     });
   };
 
-  // ✅ PIE CHART DATA
   const chartData = {
     labels: ["Approved", "Rejected", "Pending"],
     datasets: [
       {
         data: [stats.approved, stats.rejected, stats.pending],
-        backgroundColor: ["#28a745", "#dc3545", "#ffc107"]
+        backgroundColor: ["#10b981", "#ef4444", "#f59e0b"],
+        borderWidth: 0,
+        hoverOffset: 10,
       }
     ]
   };
 
   return (
-    <div className="container mt-4">
-
-      <h3 className="mb-4">Program Manager Dashboard</h3>
+    <div className="dashboard-wrapper">
+      <header className="dashboard-header">
+        <h2>Program Manager Dashboard</h2>
+        <p>Welcome back! Here's what's happening today.</p>
+      </header>
 
       {/* ✅ STATS CARDS */}
-      <div className="row">
-
-        <div className="col-md-3">
-          <div className="card text-center shadow p-3">
-            <h6>Total Programs</h6>
-            <h3>{stats.totalPrograms}</h3>
-          </div>
+      <div className="stats-grid">
+        <div className="stat-card">
+          <span className="stat-label">Total Programs</span>
+          <h3 className="stat-value">{stats.totalPrograms}</h3>
         </div>
 
-        <div className="col-md-3">
-          <div className="card text-center shadow p-3">
-            <h6>Total Applications</h6>
-            <h3>{stats.totalApplications}</h3>
-          </div>
+        <div className="stat-card">
+          <span className="stat-label">Total Applications</span>
+          <h3 className="stat-value">{stats.totalApplications}</h3>
         </div>
 
-        <div className="col-md-3">
-          <div className="card text-center shadow p-3 bg-success text-white">
-            <h6>Approved</h6>
-            <h3>{stats.approved}</h3>
-          </div>
+        <div className="stat-card approved">
+          <span className="stat-label">Approved</span>
+          <h3 className="stat-value">{stats.approved}</h3>
         </div>
 
-        <div className="col-md-3">
-          <div className="card text-center shadow p-3 bg-danger text-white">
-            <h6>Rejected</h6>
-            <h3>{stats.rejected}</h3>
-          </div>
-        </div>
-
-      </div>
-
-      {/* ✅ CHART */}
-      <div className="row mt-5">
-        <div className="col-md-6 offset-md-3">
-          <div className="card p-3 shadow">
-            <h5 className="text-center mb-3">Application Status</h5>
-            <Pie data={chartData} />
-          </div>
+        <div className="stat-card rejected">
+          <span className="stat-label">Rejected</span>
+          <h3 className="stat-value">{stats.rejected}</h3>
         </div>
       </div>
 
+      {/* ✅ CHART AREA */}
+      {/* ✅ CHART AREA */}
+<div className="content-grid">
+  <div className="chart-container">
+    <h5 className="chart-title">Application Distribution</h5>
+    <div className="pie-wrapper">
+      <Pie 
+        data={chartData} 
+        options={{
+          responsive: true,
+          maintainAspectRatio: true, // ✅ Keeps it from stretching
+          plugins: {
+            legend: { 
+              position: 'bottom', 
+              labels: { 
+                usePointStyle: true, 
+                padding: 20,
+                font: { size: 12 }
+              } 
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              padding: 12,
+              cornerRadius: 8
+            }
+          }
+        }} 
+      />
+    </div>
+  </div>
+</div>
     </div>
   );
 }

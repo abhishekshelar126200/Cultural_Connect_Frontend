@@ -1,0 +1,59 @@
+.manager-sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    background: linear-gradient(180deg, #111827, #0f172a);
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ✅ Logo */
+.logo-area h4 {
+    color: #22c55e;
+    font-weight: bold;
+    margin: 0;
+}
+
+.logo-area small {
+    color: #6b7280;
+    letter-spacing: 2px;
+    font-size: 11px;
+}
+
+/* ✅ Menu */
+.menu {
+    margin-top: 40px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: #d1d5db;
+    text-decoration: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+/* ✅ Active */
+.menu-item.active {
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    color: white;
+}
+
+/* ✅ Logout */
+.logout {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #374151;
+    color: #ef4444;
+    cursor: pointer;
+}
