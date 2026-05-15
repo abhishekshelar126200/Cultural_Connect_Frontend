@@ -131,6 +131,43 @@ function Navbar() {
                     )}
                 </div>
             </div>
+
+            {/* Component Scoped Styles */}
+            <style>{`
+                .custom-nav-link {
+                    transition: color 0.3s ease;
+                }
+                .custom-nav-link:hover {
+                    color: #fbbf24 !important;
+                }
+                .user-profile-btn {
+                    transition: background-color 0.3s ease;
+                }
+                .user-profile-btn:hover {
+                    background-color: rgba(255,255,255,0.15) !important;
+                }
+                .custom-dropdown-item {
+                    transition: all 0.2s ease;
+                    font-weight: 500;
+                    color: #475569;
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+                .custom-dropdown-item:hover {
+                    background-color: #f8fafc;
+                    color: #0f172a;
+                    padding-left: 24px; /* Slight indent effect on hover */
+                }
+                
+                /* Mobile fixes for absolute dropdown */
+                @media (max-width: 991px) {
+                    .dropdown-menu {
+                        position: relative !important;
+                        margin-top: 10px !important;
+                        border-radius: 12px !important;
+                    }
+                }
+            `}</style>
         </nav>
     );
 }

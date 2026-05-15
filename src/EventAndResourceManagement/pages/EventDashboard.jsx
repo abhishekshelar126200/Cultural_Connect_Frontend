@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation, Link } from "react-router-dom";
-import { getAllEvents, deleteEvent } from "../Event.api"; 
+import { getAllEvents, deleteEvent } from "../Event.api.js"; 
 import EventList from "../components/EventList";
 
-// ✅ EXACT RELATIVE PATH based on your project structure
+// Correct path reaching from src/EventAndResourceManagement/pages to src/ProgramManagement/Services
 import { getAllPrograms } from "../../ProgramManagement/Services/programManager.api.js"; 
 
 export default function EventDashboard() {
     const { programId } = useParams();
     const location = useLocation();
-    
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Initialize with location state if available (immediate display)
     const [headerData, setHeaderData] = useState({
         title: location.state?.title || "",
         description: location.state?.description || ""
@@ -23,63 +21,70 @@ export default function EventDashboard() {
         const loadDashboardData = async () => {
             setLoading(true);
             try {
-                // 1. Fetch Events
+                // Fetch Events
                 const eventRes = await getAllEvents();
                 const filtered = eventRes.data.filter(e => e.programId === Number(programId));
+                console.log("Fetched events:", filtered);
                 setEvents(filtered);
 
-                // 2. Fallback: If title is missing (after update/refresh), fetch from Program API
+                // Fallback for Title/Description if state is lost (on refresh/redirect)
                 if (!headerData.title) {
-                    const programRes = await getAllPrograms();
-                    const currentProgram = programRes.data.find(p => p.programId === Number(programId));
-                    if (currentProgram) {
-                        setHeaderData({
-                            title: currentProgram.title,
-                            description: currentProgram.description
-                        });
+                    const progRes = await getAllPrograms();
+                    const current = progRes.data.find(p => p.programId === Number(programId));
+                    if (current) {
+                        setHeaderData({ title: current.title, description: current.description });
                     }
                 }
             } catch (err) {
-                console.error("Dashboard data load error:", err);
+                console.error("Dashboard load error", err);
             } finally {
                 setLoading(false);
             }
         };
-
         loadDashboardData();
     }, [programId]);
 
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure?")) {
-            try {
-                await deleteEvent(id);
+    if (window.confirm("Are you sure you want to delete this event?")) {
+        try {
+            // 1. Await the actual server-side deletion
+            const res = await deleteEvent(id);
+            
+            // 2. Only update state if the status code indicates success (e.g., 200 OK or 204 No Content)
+            if (res.status === 200 || res.status === 204) {
                 setEvents(prev => prev.filter(e => e.eventId !== id));
-            } catch (err) {
-                alert("Delete failed.");
+                alert("Event deleted successfully ✅");
+            } else {
+                alert("Failed to delete from database. Status: " + res.status);
             }
+        } catch (err) {
+            // 3. Catch database constraints or network errors
+            console.error("Delete error:", err.response?.data || err.message);
+            
+            // Helpful hint: Often 500 errors occur because of existing Resources linked to the Event
+            const errorMessage = err.response?.status === 500 
+                ? "Cannot delete event. Ensure all associated resources are deleted first." 
+                : "Delete failed on server. ❌";
+                
+            alert(errorMessage);
         }
-    };
-
-    if (loading && events.length === 0) {
-        return <div className="text-center mt-5"><h5>Loading dashboard...</h5></div>;
     }
-
+};
     return (
         <div className="container mt-4 text-start">
-            {/* Header section that now persists through updates */}
-            <div className="mb-4 p-4 bg-white shadow-sm rounded border-start border-primary border-4">
-                <h2 className="fw-bold text-dark">{headerData.title || `Program Details (#${programId})`}</h2>
-                <p className="text-muted mb-0 mt-2">
-                    <i className="bi bi-info-circle me-2"></i>
-                    {headerData.description || "No description available for this program."}
-                </p>
+            <div className="card shadow-sm border-0 border-start border-primary border-4 mb-4">
+                <div className="card-body p-4">
+                    <h2 className="fw-bold text-dark">{headerData.title || "Loading..."}</h2>
+                    <p className="text-muted mb-0 mt-2">
+                        <i className="bi bi-info-circle me-2"></i>
+                        {headerData.description || "Loading description..."}
+                    </p>
+                </div>
             </div>
 
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h4 className="fw-bold text-secondary m-0">Associated Events</h4>
-                <Link to={`/programmanager/createEvent/${programId}`} className="btn btn-primary shadow-sm">
-                    + Create New Event
-                </Link>
+                <Link to={`/programmanager/createEvent/${programId}`} className="btn btn-primary shadow-sm">+ Create New Event</Link>
             </div>
 
             {events.length > 0 ? (
