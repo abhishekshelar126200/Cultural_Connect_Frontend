@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { uploadImage, createHeritageSite } from "../Heritage.api";
-// import { v4 as uuidv4 } from "uuid";
 
 export default function CreateHeritageSite() {
     const [formData, setFormData] = useState({
@@ -12,154 +11,174 @@ export default function CreateHeritageSite() {
     });
 
     const [imageFile, setImageFile] = useState(null);
+    const [preview, setPreview] = useState(null);
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleImageChange = (e) => {
-        setImageFile(e.target.files[0]);
+        const file = e.target.files[0];
+        setImageFile(file);
+        if (file) {
+            setPreview(URL.createObjectURL(file));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         setSuccess("");
+        setLoading(true);
 
         try {
             let fileUri = "";
-            // const siteId = uuidv4();
-            const siteId = Date.now(); // Simple unique ID based on timestamp
-            // ✅ STEP 1: Upload image first (multipart)
-            if (imageFile) {
+            const siteId = Date.now();
 
+            if (imageFile) {
                 const imageData = new FormData();
                 imageData.append("file", imageFile);
-
                 const uploadRes = await uploadImage(siteId, imageData);
-
-                // Backend should return uploaded image URL
                 fileUri = uploadRes.data.fileUri;
             }
 
-            console.log("Image uploaded, file URI:", fileUri);
-
-            // ✅ STEP 2: Send heritage site data
-            const payload = {
-                ...formData,
-                siteId,
-                fileUri
-            };
-
+            const payload = { ...formData, siteId, fileUri };
             await createHeritageSite(payload);
 
-            setSuccess("Heritage site created successfully!");
-            setFormData({
-                name: "",
-                location: "",
-                description: "",
-                status: "Active",
-                fileUri: ""
-            });
+            setSuccess("✅ Heritage site created successfully!");
+            setFormData({ name: "", location: "", description: "", status: "Active", fileUri: "" });
             setImageFile(null);
-
+            setPreview(null);
         } catch (err) {
-            setError("Failed to create heritage site");
+            setError("❌ Failed to create heritage site");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container my-5">
-            <div className="row justify-content-center">
-                <div className="col-md-7">
+        <div className="container py-4">
+            <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div className="row g-0">
 
-                    <div className="card shadow-lg border-0">
-                        <div className="card-body p-4">
+                    {/* Left Column: Form Details */}
+                    <div className="col-lg-7 p-4 p-md-5 bg-white">
+                        <div className="mb-4">
+                            <h2 className="fw-bold text-dark">🏛️ Add Heritage Site</h2>
+                            <p className="text-muted">Register a new cultural landmark in the system.</p>
+                        </div>
 
-                            <h3 className="fw-bold text-primary text-center mb-4">
-                                Create Heritage Site
-                            </h3>
+                        {success && <div className="alert alert-success border-0 small">{success}</div>}
+                        {error && <div className="alert alert-danger border-0 small">{error}</div>}
 
-                            {success && <div className="alert alert-success">{success}</div>}
-                            {error && <div className="alert alert-danger">{error}</div>}
-
-                            <form onSubmit={handleSubmit}>
-
-                                <div className="mb-3">
-                                    <label className="form-label">Heritage Name</label>
+                        <form onSubmit={handleSubmit}>
+                            <div className="row">
+                                <div className="col-md-6 mb-3">
+                                    <label className="form-label fw-semibold small">Heritage Name</label>
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control bg-light border-0 py-2"
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
+                                        placeholder="e.g. Ancient Temple"
                                         required
                                     />
                                 </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label">Location</label>
+                                <div className="col-md-6 mb-3">
+                                    <label className="form-label fw-semibold small">Location</label>
                                     <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control bg-light border-0 py-2"
                                         name="location"
                                         value={formData.location}
                                         onChange={handleChange}
+                                        placeholder="City, Country"
                                         required
                                     />
                                 </div>
+                            </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label">Description</label>
-                                    <textarea
-                                        className="form-control"
-                                        name="description"
-                                        rows="3"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold small">Status</label>
+                                <select
+                                    className="form-select bg-light border-0 py-2"
+                                    name="status"
+                                    value={formData.status}
+                                    onChange={handleChange}
+                                >
+                                    <option value="Active">🟢 Active / Open</option>
+                                    <option value="Inactive">🔴 Inactive / Restricted</option>
+                                </select>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label fw-semibold small">Detailed Description</label>
+                                <textarea
+                                    className="form-control bg-light border-0"
+                                    name="description"
+                                    rows="5"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    placeholder="Provide historical context and significance..."
+                                    required
+                                />
+                            </div>
+
+                            <div className="d-grid">
+                                <button
+                                    className="btn btn-dark btn-lg py-3 rounded-3 fw-bold"
+                                    type="submit"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Processing..." : "Confirm & Save Site"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Right Column: Image Upload & Visual Preview */}
+                    <div className="col-lg-5 p-4 p-md-5 bg-light border-start d-flex flex-column justify-content-center">
+                        <div className="text-center mb-4">
+                            <h5 className="fw-bold">Visual Representation</h5>
+                            <p className="small text-muted">Upload a high-quality photo of the site</p>
+                        </div>
+
+                        <div
+                            className="border border-2 border-dashed rounded-4 d-flex align-items-center justify-content-center bg-white position-relative overflow-hidden"
+                            style={{ minHeight: "300px", borderStyle: "dashed !important", borderColor: "#dee2e6 !important" }}
+                        >
+                            {preview ? (
+                                <img
+                                    src={preview}
+                                    alt="Preview"
+                                    className="w-100 h-100 object-fit-cover position-absolute"
+                                />
+                            ) : (
+                                <div className="text-center p-4">
+                                    <div className="display-4 text-muted mb-2">📸</div>
+                                    <p className="text-muted small mb-0">No image selected</p>
                                 </div>
+                            )}
+                        </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label">Status</label>
-                                    <select
-                                        className="form-select"
-                                        name="status"
-                                        value={formData.status}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-
-                                <div className="mb-4">
-                                    <label className="form-label">Heritage Image</label>
-                                    <input
-                                        type="file"
-                                        className="form-control"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                    />
-                                    <small className="text-muted">
-                                        Upload an image for the heritage site
-                                    </small>
-                                </div>
-
-                                <div className="d-grid">
-                                    <button className="btn btn-primary btn-lg">
-                                        Create Heritage Site
-                                    </button>
-                                </div>
-
-                            </form>
-
+                        <div className="mt-4">
+                            <input
+                                type="file"
+                                id="siteImage"
+                                className="d-none"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                            <label htmlFor="siteImage" className="btn btn-outline-primary w-100 py-2 rounded-3 fw-semibold">
+                                {preview ? "Change Photo" : "Choose Photo"}
+                            </label>
+                            <p className="text-center x-small text-muted mt-2" style={{ fontSize: '0.75rem' }}>
+                                Supported formats: JPG, PNG (Max 5MB)
+                            </p>
                         </div>
                     </div>
 

@@ -1,5 +1,5 @@
 // Import the clients that have the TOKEN interceptor attached
-import { httpAdminClient, httpAdminlogClient, httpReportClient } from "../Services/httpClient";
+import { httpAdminClient, httpAdminlogClient, httpReportClient, httpNotificationClient } from "../Services/httpClient";
 
 // ✅ Fetch all users (Using AdminClient because it sends the Bearer Token)
 export const getAllUsers = () => 
@@ -22,6 +22,14 @@ export const getUserById = (userId) =>
     httpAdminClient.get(`/getUserById/${userId}`);
 
 
+// ✅ Register a new user as Admin
+export const registerUserByAdmin = (userData) => 
+    httpAdminClient.post("/userRegisterByAdmin", userData);
+
+// ✅ Delete a user by Admin
+export const deleteUserByAdmin = (userId) => 
+    httpAdminClient.delete(`/deleteUserByAdmin/${userId}`);
+
 // ✅ Reports APIs
 export const getDashboardSummary = () => 
     httpReportClient.get("/dashboard/summary");
@@ -39,5 +47,16 @@ export const generateReport = (scope) =>
 export const getReportById = (id) => 
     httpReportClient.get(`/${id}`);
 
-export const deleteReport = (id) => 
-    httpReportClient.delete(`/delete/${id}`);
+//Notification
+
+export const sendTargetedNotification = (data) => 
+    httpNotificationClient.post("/send", data);
+
+export const sendUniversalNotification = (data) => 
+    httpNotificationClient.post("/universal", data);
+
+export const getAllNotifications = () => 
+    httpNotificationClient.get("");
+
+export const deleteNotification = (id) => 
+    httpNotificationClient.delete(`/${id}`);

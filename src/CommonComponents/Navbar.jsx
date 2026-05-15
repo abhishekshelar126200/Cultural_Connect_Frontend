@@ -1,21 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+ 
 function Navbar() {
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
-    const dropdownRef = useRef(null); // Used to detect clicks outside the dropdown
+    const dropdownRef = useRef(null);
 
     const token = localStorage.getItem("jwtToken");
     const isLoggedIn = !!token;
     const userName = localStorage.getItem("username");
 
-    const handleLogout = () => {
-        localStorage.clear();
-        navigate("/login");
-    };
-
-    // Close dropdown when clicking anywhere outside of it
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -25,90 +19,116 @@ function Navbar() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
+    const handleLogout = () => {
+        localStorage.clear();
+        setShowDropdown(false);
+        navigate("/login");
+    };
+    // --- Modern White Styling ---
+    const navStyle = {
+        background: "rgba(255, 255, 255, 0.9)", // White with slight transparency
+        backdropFilter: "blur(12px)",           // Blur effect for scrolling
+        borderBottom: "1px solid #eaeaea",      // Subtle separator
+        padding: "0.7rem 0",
+        transition: "all 0.3s ease"
+    };
+    const brandStyle = {
+        fontSize: "1.4rem",
+        fontWeight: "800",
+        letterSpacing: "-0.5px",
+        background: "linear-gradient(45deg, #1a1a1a, #4a4a4a)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent"
+    };
+    const dropdownMenuStyle = {
+        display: showDropdown ? "block" : "none",
+        position: "absolute",
+        right: "0",
+        top: "120%",
+        minWidth: "210px",
+        borderRadius: "12px",
+        border: "1px solid #eee",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+        background: "#ffffff",
+        padding: "8px",
+        zIndex: 1050
+    };
+    const avatarStyle = {
+        width: "32px",
+        height: "32px",
+        background: "#f0f2f5",
+        color: "#1a1a1a",
+        borderRadius: "50%",
+        display: "grid",
+        placeItems: "center",
+        fontSize: "0.85rem",
+        fontWeight: "600",
+        border: "1px solid #ddd"
+    };
     return (
-        <nav className="navbar navbar-expand-lg sticky-top shadow-sm" style={{ backgroundColor: "#0f172a", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-            <div className="container py-2">
-                
-                {/* Brand / Logo */}
-                <Link className="navbar-brand fw-bold fs-4 d-flex align-items-center" to="/citizen">
-                    <i className="bi bi-bank2 me-2" style={{ color: "#fbbf24" }}></i>
-                    <span className="text-white">Culture</span>
-                    <span style={{ color: "#fbbf24" }}>Connect</span>
+        <nav className="navbar navbar-expand sticky-top" style={navStyle}>
+            <div className="container">
+                {/* Brand Logo */}
+                <Link className="navbar-brand" style={brandStyle} to="/citizen">
+                    CultureConnect
                 </Link>
-
-                {/* Mobile Hamburger Toggle */}
-                <button className="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style={{ filter: "invert(1)" }}>
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-
-                {/* Navbar Links & Controls */}
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav ms-auto align-items-center mt-3 mt-lg-0">
-                        {!isLoggedIn ? (
-                            <>
-                                <li className="nav-item me-lg-3 mb-2 mb-lg-0">
-                                    <Link className="nav-link text-light fw-medium custom-nav-link" to="/login">
-                                        Sign In
+                <div className="ms-auto d-flex align-items-center">
+                    {!isLoggedIn ? (
+                        <div className="d-flex align-items-center gap-3">
+                            <Link
+                                className="text-decoration-none fw-medium"
+                                style={{ color: "#444", fontSize: "0.95rem" }}
+                                to="/login"
+                            >
+                                Sign In
+                            </Link>
+                            <Link
+                                className="btn btn-dark btn-sm px-4 rounded-pill fw-bold"
+                                style={{ fontSize: "0.9rem", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+                                to="/register"
+                            >
+                                Join Now
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="position-relative" ref={dropdownRef}>
+                            <button
+                                className="btn d-flex align-items-center gap-2 border-0 bg-transparent"
+                                style={{ padding: "4px 8px" }}
+                                onClick={() => setShowDropdown(!showDropdown)}
+                            >
+                                <div style={avatarStyle}>
+                                    {userName?.charAt(0).toUpperCase() || "U"}
+                                </div>
+                                <span className="fw-semibold d-none d-sm-inline" style={{ color: "#333" }}>
+                                    {userName || "Profile"}
+                                </span>
+                                <span style={{ color: "#999", fontSize: "0.6rem" }}>▼</span>
+                            </button>
+                            {/* Dropdown Menu */}
+                            <ul style={dropdownMenuStyle} className="list-unstyled m-0">
+                                <li>
+                                    <Link
+                                        className="dropdown-item rounded-3 py-2 px-3 fw-medium"
+                                        to="/profile"
+                                        onClick={() => setShowDropdown(false)}
+                                        style={{ color: "#444" }}
+                                    >
+                                        👤 Account Settings
                                     </Link>
                                 </li>
-                                <li className="nav-item w-100 w-lg-auto">
-                                    <Link className="btn fw-bold px-4 rounded-pill w-100" style={{ backgroundColor: "#fbbf24", color: "#0f172a" }} to="/register">
-                                        Get Started
-                                    </Link>
+                                <li className="my-1"><hr className="dropdown-divider opacity-50" /></li>
+                                <li>
+                                    <button
+                                        className="dropdown-item rounded-3 py-2 px-3 text-danger fw-bold"
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </button>
                                 </li>
-                            </>
-                        ) : (
-                            <li className="nav-item dropdown w-100 w-lg-auto mt-2 mt-lg-0" ref={dropdownRef}>
-                                {/* Profile Avatar Button */}
-                                <button
-                                    className="btn d-flex align-items-center justify-content-between w-100 gap-2 border-0 user-profile-btn"
-                                    onClick={() => setShowDropdown(!showDropdown)}
-                                    type="button"
-                                    style={{ background: "rgba(255,255,255,0.08)", color: "white", borderRadius: "50px", padding: "5px 15px 5px 5px" }}
-                                >
-                                    <div className="d-flex align-items-center gap-2">
-                                        <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: "35px", height: "35px", backgroundColor: "#3b82f6", color: "white", fontWeight: "bold" }}>
-                                            {userName ? userName.charAt(0).toUpperCase() : "U"}
-                                        </div>
-                                        <span className="fw-medium">{userName || "Profile"}</span>
-                                    </div>
-                                    <i className={`bi bi-chevron-${showDropdown ? 'up' : 'down'} ms-2`} style={{ fontSize: "0.8rem", color: "#94a3b8" }}></i>
-                                </button>
-
-                                {/* Dropdown Menu */}
-                                <ul className={`dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 rounded-4 ${showDropdown ? 'show' : ''}`}
-                                    style={{ position: 'absolute', right: 0, minWidth: "220px", backgroundColor: "#ffffff" }}>
-                                    
-                                    {/* User Info Header */}
-                                    <li className="px-4 py-3 border-bottom bg-light rounded-top-4" style={{ marginTop: "-8px" }}>
-                                        <p className="mb-0 text-muted small">Signed in as</p>
-                                        <p className="mb-0 fw-bold text-truncate" style={{ color: "#0f172a", maxWidth: "180px" }}>{userName || "Citizen"}</p>
-                                    </li>
-                                    
-                                    {/* Links */}
-                                    <li>
-                                        <Link className="dropdown-item py-2 mt-2 d-flex align-items-center gap-3 custom-dropdown-item" to="/profile" onClick={() => setShowDropdown(false)}>
-                                            <i className="bi bi-person text-primary fs-5"></i> My Profile
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item py-2 d-flex align-items-center gap-3 custom-dropdown-item" to="/dashboard" onClick={() => setShowDropdown(false)}>
-                                            <i className="bi bi-grid text-primary fs-5"></i> Dashboard
-                                        </Link>
-                                    </li>
-                                    
-                                    <li><hr className="dropdown-divider my-2" /></li>
-                                    
-                                    <li>
-                                        <button className="dropdown-item py-2 text-danger d-flex align-items-center gap-3 custom-dropdown-item" onClick={handleLogout}>
-                                            <i className="bi bi-box-arrow-right fs-5"></i> Log out
-                                        </button>
-                                    </li>
-                                </ul>
-                            </li>
-                        )}
-                    </ul>
+                            </ul>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -151,5 +171,5 @@ function Navbar() {
         </nav>
     );
 }
-
+ 
 export default Navbar;

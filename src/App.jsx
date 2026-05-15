@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
  
+
 // ✅ Existing imports (unchanged)
 import CitizenRoutes from './Routes/CitizenRoutes';
 import CitizenDashboard from './CitizenManagement/pages/CitizenDashboard';
@@ -49,7 +50,7 @@ import CitizenApplications from './CitizenManagement/pages/CitizenApplications';
 import OfficerCitizens from './ProgramManagement/pages/OfficerCitizens';
 import ProgramApplications from './ProgramManagement/pages/ProgramApplications';
 import MyGrants from './ProgramManagement/pages/MyGrants';
-//import ProgramDetails from './ComplianceAndAudit/pages/ProgramDetails';
+import ProgramDetail from './ComplianceAndAudit/pages/ProgramDetails';
 export default function App() {
   return (
     <>
@@ -75,6 +76,7 @@ export default function App() {
         {/* Admin */}
         <Route path="/admin" element={<AdminRoutes />}>
           <Route path="dashboard" element={<AdminDashboard />} />
+          
         </Route>
  
         {/* Compliance & Audit */}
@@ -87,7 +89,7 @@ export default function App() {
  
         <Route path="/audit" element={<AuditRoutes />}>
           <Route path='auditordashboard' element={<AuditorDashboard />} />
-          <Route path='programDetails/:complianceId/:programId' element={<ProgramDetails />} />
+          <Route path='programDetails/:complianceId/:programId' element={<ProgramDetail />} />
         </Route>
  
         {/* Program Manager */}

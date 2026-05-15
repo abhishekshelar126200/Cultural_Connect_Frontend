@@ -1,5 +1,5 @@
 import axios from "axios";
- 
+
 // --------------- Citizen Client ---------------
 const httpCitizenClient = axios.create({
     baseURL: "http://localhost:8081/api/citizens",
@@ -7,7 +7,7 @@ const httpCitizenClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+
 // --------------- Program Client ---------------
 const httpProgramClient = axios.create({
     baseURL: "http://localhost:8081/api/programs",
@@ -15,7 +15,7 @@ const httpProgramClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+
 // --------------- Login Client (NO TOKEN) ---------------
 const httpLoginClient = axios.create({
     baseURL: "http://localhost:8081/cultureconnect",
@@ -23,8 +23,8 @@ const httpLoginClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
- 
+
+
 // --------------- Heritage Client ---------------
 const httpHeritageClient = axios.create({
     baseURL: "http://localhost:8081/api/heritage-sites",
@@ -32,7 +32,7 @@ const httpHeritageClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+
 // --------------- Preservation Client ---------------
 const httpPreservationClient = axios.create({
     baseURL: "http://localhost:8081/api/activities",
@@ -40,13 +40,13 @@ const httpPreservationClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
- 
+
+
 // --------------- Upload File Client ---------------
 const httpFileUploadClient = axios.create({
-    baseURL: "http://localhost:8081/api/events",
+    baseURL: "http://localhost:8081/api/heritage-sites",
 });
- 
+
 // --------------- EventAndResource Client ---------------
 const httpEventClient = axios.create({
     baseURL: "http://localhost:8081/api/events",
@@ -54,7 +54,7 @@ const httpEventClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+
 // --------------- EventAndResource Client ---------------
 const httpResourceClient = axios.create({
     baseURL: "http://localhost:8081/api/resources",
@@ -62,8 +62,8 @@ const httpResourceClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
- 
+
+
 // --------------- EventAndResource Client ---------------
 const httpComplianceClient = axios.create({
     baseURL: "http://localhost:8081/compliance",
@@ -85,7 +85,7 @@ const httpAdminClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+
 // --------------- Admin/audit logs  Client ---------------
 const httpAdminlogClient = axios.create({
     baseURL: "http://localhost:8081/audit_log",
@@ -93,7 +93,7 @@ const httpAdminlogClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
+
 
 // --------------- Notifications  Client ---------------
 const httpNotificationClient = axios.create({
@@ -102,9 +102,9 @@ const httpNotificationClient = axios.create({
         "Content-Type": "application/json",
     },
 });
- 
 
- // --------------- Report  Client ---------------
+
+// --------------- Report  Client ---------------
 const httpReportClient = axios.create({
     baseURL: "http://localhost:8081/api/reports",
     headers: {
@@ -120,7 +120,7 @@ const attachToken = (config) => {
     }
     return config;
 };
- 
+
 httpCitizenClient.interceptors.request.use(attachToken);
 httpProgramClient.interceptors.request.use(attachToken);
 httpHeritageClient.interceptors.request.use(attachToken);
