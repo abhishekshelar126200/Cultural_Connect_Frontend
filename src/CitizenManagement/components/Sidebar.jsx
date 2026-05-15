@@ -33,7 +33,14 @@ function Sidebar() {
     };
 
     return (
-        <div className="bg-dark text-white p-3 d-flex flex-column" style={{ width: "260px", height: "100vh" }}>
+        <div className="bg-dark text-white p-3 d-flex flex-column" 
+style={{
+    width: "260px",
+    height: "100vh",
+    position: "sticky",   // ✅ USE THIS (NOT fixed)
+    top: 0               // ✅ stick to top
+  }}
+>
             <h4 className="mb-4 text-center fw-bold text-success">CultureConnect</h4>
             <ul className="nav nav-pills flex-column gap-2">
                 <li className="nav-item">
@@ -59,15 +66,6 @@ function Sidebar() {
 
                 <li className="nav-item">
                     <NavLink to="/citizen/grants" className="nav-link text-white">💰 My Grants</NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink to="/citizen/events" className="nav-link text-white">🎭 My Events</NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink 
-                     to="/citizen/notifications" className="nav-link text-white d-flex align-items-center"> <span>🔔 Notifications</span>
-                     {unreadCount > 0 && (<span className="notif-badge">{unreadCount > 9 ? '9+' : unreadCount} </span>)}
-                    </NavLink>
                 </li>
             </ul>
             <div className="mt-auto">

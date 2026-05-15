@@ -2,6 +2,7 @@ import React from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // ✅ Existing imports (unchanged)
 import CitizenRoutes from './Routes/CitizenRoutes';
@@ -74,6 +75,7 @@ export default function App() {
         {/* Admin */}
         <Route path="/admin" element={<AdminRoutes />}>
           <Route path="dashboard" element={<AdminDashboard />} />
+          
         </Route>
 
         {/* Compliance & Audit */}

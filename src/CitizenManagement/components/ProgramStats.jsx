@@ -1,47 +1,36 @@
-import React from 'react'
-
 export default function ProgramStats({ programStats }) {
-    const { appliedPrograms, approvedGrants, upcomingEvents, notifications } = programStats;
 
     return (
-        <div className="row g-4">
+        <div className="row mb-4">
 
             <div className="col-md-3">
-                <div className="card text-center shadow-sm">
-                    <div className="card-body">
-                        <h6 className="text-muted">Applied Programs</h6>
-                        <h3 className="fw-bold">{appliedPrograms}</h3>
-                    </div>
+                <div className="card text-center p-3 shadow">
+                    <h6>Applied Programs</h6>
+                    <h3>{programStats.appliedPrograms}</h3>
                 </div>
             </div>
 
             <div className="col-md-3">
-                <div className="card text-center shadow-sm">
-                    <div className="card-body">
-                        <h6 className="text-muted">Approved Grants</h6>
-                        <h3 className="fw-bold">{approvedGrants}</h3>
-                    </div>
+                <div className="card text-center p-3 shadow bg-success text-white">
+                    <h6>Approved Programs</h6>
+                    <h3>{programStats.approvedPrograms}</h3>
                 </div>
             </div>
 
             <div className="col-md-3">
-                <div className="card text-center shadow-sm">
-                    <div className="card-body">
-                        <h6 className="text-muted">Upcoming Events</h6>
-                        <h3 className="fw-bold">{upcomingEvents}</h3>
-                    </div>
+                <div className="card text-center p-3 shadow bg-danger text-white">
+                    <h6>Rejected Programs</h6>
+                    <h3>{programStats.rejectedPrograms}</h3>
                 </div>
             </div>
 
             <div className="col-md-3">
-                <div className="card text-center shadow-sm">
-                    <div className="card-body">
-                        <h6 className="text-muted">Notifications</h6>
-                        <h3 className="fw-bold">{notifications}</h3>
-                    </div>
+                <div className="card text-center p-3 shadow">
+                    <h6>Notifications</h6>
+                    <h3>{programStats.notifications}</h3>
                 </div>
             </div>
 
         </div>
-    )
+    );
 }

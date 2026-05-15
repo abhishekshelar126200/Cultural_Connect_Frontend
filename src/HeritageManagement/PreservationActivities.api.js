@@ -7,3 +7,12 @@ export const addPreservationActivity = (activityData) =>
 
 export const deletePreservationActivity = (activityId) =>
     httpPreservationClient.delete(`/deleteActivity/${activityId}`);
+
+export const updatePreservationActivity = (activityId, status) =>
+    httpPreservationClient.put(
+        `/updateActivityStatus/${activityId}`,
+        null, // ✅ no request body
+        {
+            params: { status } // ✅ send as query parameter
+        }
+    );
