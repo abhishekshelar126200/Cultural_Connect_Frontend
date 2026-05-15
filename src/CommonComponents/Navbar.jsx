@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+ 
 function Navbar() {
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
@@ -19,13 +19,11 @@ function Navbar() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
     const handleLogout = () => {
         localStorage.clear();
         setShowDropdown(false);
         navigate("/login");
     };
-
     // --- Modern White Styling ---
     const navStyle = {
         background: "rgba(255, 255, 255, 0.9)", // White with slight transparency
@@ -34,7 +32,6 @@ function Navbar() {
         padding: "0.7rem 0",
         transition: "all 0.3s ease"
     };
-
     const brandStyle = {
         fontSize: "1.4rem",
         fontWeight: "800",
@@ -43,7 +40,6 @@ function Navbar() {
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent"
     };
-
     const dropdownMenuStyle = {
         display: showDropdown ? "block" : "none",
         position: "absolute",
@@ -57,7 +53,6 @@ function Navbar() {
         padding: "8px",
         zIndex: 1050
     };
-
     const avatarStyle = {
         width: "32px",
         height: "32px",
@@ -70,7 +65,6 @@ function Navbar() {
         fontWeight: "600",
         border: "1px solid #ddd"
     };
-
     return (
         <nav className="navbar navbar-expand sticky-top" style={navStyle}>
             <div className="container">
@@ -78,7 +72,6 @@ function Navbar() {
                 <Link className="navbar-brand" style={brandStyle} to="/citizen">
                     CultureConnect
                 </Link>
-
                 <div className="ms-auto d-flex align-items-center">
                     {!isLoggedIn ? (
                         <div className="d-flex align-items-center gap-3">
@@ -112,7 +105,6 @@ function Navbar() {
                                 </span>
                                 <span style={{ color: "#999", fontSize: "0.6rem" }}>▼</span>
                             </button>
-
                             {/* Dropdown Menu */}
                             <ul style={dropdownMenuStyle} className="list-unstyled m-0">
                                 <li>
@@ -142,5 +134,5 @@ function Navbar() {
         </nav>
     );
 }
-
+ 
 export default Navbar;
