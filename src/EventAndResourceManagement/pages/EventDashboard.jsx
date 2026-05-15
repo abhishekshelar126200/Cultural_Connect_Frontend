@@ -45,14 +45,31 @@ export default function EventDashboard() {
     }, [programId]);
 
     const handleDelete = async (id) => {
-        if (window.confirm("Delete event?")) {
-            try {
-                await deleteEvent(id);
+    if (window.confirm("Are you sure you want to delete this event?")) {
+        try {
+            // 1. Await the actual server-side deletion
+            const res = await deleteEvent(id);
+            
+            // 2. Only update state if the status code indicates success (e.g., 200 OK or 204 No Content)
+            if (res.status === 200 || res.status === 204) {
                 setEvents(prev => prev.filter(e => e.eventId !== id));
-            } catch (err) { alert("Delete failed"); }
+                alert("Event deleted successfully ✅");
+            } else {
+                alert("Failed to delete from database. Status: " + res.status);
+            }
+        } catch (err) {
+            // 3. Catch database constraints or network errors
+            console.error("Delete error:", err.response?.data || err.message);
+            
+            // Helpful hint: Often 500 errors occur because of existing Resources linked to the Event
+            const errorMessage = err.response?.status === 500 
+                ? "Cannot delete event. Ensure all associated resources are deleted first." 
+                : "Delete failed on server. ❌";
+                
+            alert(errorMessage);
         }
-    };
-
+    }
+};
     return (
         <div className="container mt-4 text-start">
             <div className="card shadow-sm border-0 border-start border-primary border-4 mb-4">

@@ -1,156 +1,9 @@
-// import React, { useState, useEffect } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { loginCitizen } from "../../citizen.api";
-// import toast from 'react-hot-toast';
-// function Login() {
-
-//     const navigate = useNavigate();
-
-//     const [formData, setFormData] = useState({
-//         email: "",
-//         password: ""
-//     });
-
-//     const [error, setError] = useState("");
-//     const [loading, setLoading] = useState(false);
-
-//     // ✅ AUTO-REDIRECT IF TOKEN EXISTS
-//     useEffect(() => {
-//         const token = localStorage.getItem("jwtToken");
-//         if (token) {
-//             navigate("/citizen/dashboard");
-//         }
-//     }, [navigate]);
-
-//     const handleChange = (e) => {
-//         setFormData({
-//             ...formData,
-//             [e.target.name]: e.target.value
-//         });
-//     };
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         setError("");
-//         setLoading(true);
-
-//         try {
-//             const response = await loginCitizen(formData);
-
-//             // ✅ Store JWT
-//             localStorage.setItem("jwtToken", response.data.token);
-
-//             setLoading(false);
-
-//             const decodedToken = JSON.parse(atob(token.split('.')[1]));
-//             const userRole = decodedToken.role;
-
-//             if (userRole === 'ADMIN') {
-//                 console.log("Admin logged in");
-//                 navigate('/admin/dashboard');
-//             } else {
-//                 console.log("Citizen logged in");
-//                 navigate('/citizen/dashboard');
-//             }
-
-//         } catch (err) {
-//             setLoading(false);
-//             setError("Invalid email or password");
-//         }
-//     };
-
-//     return (
-//         <div className="container my-5">
-//             <div className="row justify-content-center">
-//                 <div className="col-md-5">
-
-//                     <div className="card shadow-lg border-0">
-//                         <div className="card-body p-4">
-
-//                             <h3 className="text-center fw-bold text-primary mb-2">
-//                                 Welcome Back
-//                             </h3>
-//                             <p className="text-center text-muted mb-4">
-//                                 Login to access CultureConnect
-//                             </p>
-
-//                             {error && (
-//                                 <div className="alert alert-danger">
-//                                     {error}
-//                                 </div>
-//                             )}
-
-//                             <form onSubmit={handleSubmit}>
-
-//                                 <div className="mb-3">
-//                                     <label className="form-label">Email Address</label>
-//                                     <input
-//                                         type="email"
-//                                         className="form-control"
-//                                         name="email"
-//                                         value={formData.email}
-//                                         onChange={handleChange}
-//                                         placeholder="Enter your email"
-//                                         required
-//                                     />
-//                                 </div>
-
-//                                 <div className="mb-3">
-//                                     <label className="form-label">Password</label>
-//                                     <input
-//                                         type="password"
-//                                         className="form-control"
-//                                         name="password"
-//                                         value={formData.password}
-//                                         onChange={handleChange}
-//                                         placeholder="Enter your password"
-//                                         required
-//                                     />
-//                                 </div>
-
-//                                 <div className="d-flex justify-content-between mb-3">
-//                                     <Link to="/forgot-password" className="text-decoration-none">
-//                                         Forgot Password?
-//                                     </Link>
-//                                 </div>
-
-//                                 <div className="d-grid">
-//                                     <button
-//                                         type="submit"
-//                                         className="btn btn-primary btn-lg"
-//                                         disabled={loading}
-//                                     >
-//                                         {loading ? "Signing in..." : "Login"}
-//                                     </button>
-//                                 </div>
-
-//                             </form>
-
-//                             <hr className="my-4" />
-
-//                             <p className="text-center mb-0">
-//                                 New to CultureConnect?{" "}
-//                                 <Link to="/citizen/register" className="fw-semibold">
-//                                     Register here
-//                                 </Link>
-//                             </p>
-
-//                         </div>
-//                     </div>
-
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-// export default Login;
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginCitizen } from "../../citizen.api";
-function Login() {
+import logoImg from "../../../assets/logo.png";
 
+function Login() {
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -165,6 +18,7 @@ function Login() {
             [e.target.name]: e.target.value
         });
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -172,29 +26,21 @@ function Login() {
 
         try {
             if (formData.email && formData.password) {
-
                 const response = await loginCitizen(formData);
-
                 const token = response.data.token;
 
                 // ✅ store token
                 localStorage.setItem("jwtToken", token);
 
-
                 // ✅ decode JWT
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                const userId = payload.userId;   // ✅ IMPORTANT
+                const userId = payload.userId;
                 const username = payload.Username;
-                localStorage.setItem("userId", userId); // ✅ Store userId for later use
-                localStorage.setItem("username", username); // ✅ Store username for later use 
+                localStorage.setItem("userId", userId); 
+                localStorage.setItem("username", username); 
                 localStorage.setItem("status", response.data.status);
  
-                const role = payload.role;   // ✅ IMPORTANT
-
-                console.log("User Role:", role);
-                console.log("User ID:", userId);
-                console.log("Username:", username);
-                console.log("Account Status:", response.data.status);
+                const role = payload.role;
 
                 // ✅ redirect based on role
                 if (role === "ADMIN") {
@@ -208,11 +54,9 @@ function Login() {
                 } else if (role === "AUDITOR") {
                     navigate("/audit/auditordashboard");
                 } else {
-                    navigate("/citizen/dashboard");  // default
+                    navigate("/citizen/dashboard");
                 }
-
                 setLoading(false);
-
             } else {
                 throw new Error();
             }
@@ -223,84 +67,102 @@ function Login() {
     };
 
     return (
-        <div className="container my-5">
-            <div className="row justify-content-center">
-                <div className="col-md-5">
-
-                    <div className="card shadow-lg border-0">
-                        <div className="card-body p-4">
-
-                            <h3 className="text-center fw-bold text-primary mb-2">
-                                Welcome Back
-                            </h3>
-                            <p className="text-center text-muted mb-4">
-                                Login to access CultureConnect
-                            </p>
-
-                            {error && (
-                                <div className="alert alert-danger">
-                                    {error}
-                                </div>
-                            )}
-
-                            <form onSubmit={handleSubmit}>
-
-                                <div className="mb-3">
-                                    <label className="form-label">Email Address</label>
-                                    <input
-                                        type="email"
-                                        className="form-control"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        placeholder="Enter your email"
-                                        required
-                                    />
+        <div style={{ background: "radial-gradient(circle at top right, #1e293b, #0f172a)", minHeight: "100vh", display: "flex", alignItems: "center", padding: "40px 0" }}>
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-md-8 col-lg-5">
+                        
+                        <div className="card shadow-lg border-0 rounded-4 overflow-hidden">
+                            <div className="card-body p-5">
+                                
+                                <div className="text-center mb-4">
+                                    <img 
+                                    src={logoImg} 
+                                    alt="CultureConnect Logo" 
+                                     className="mb-3" 
+                                     style={{ height: "70px", width: "auto", objectFit: "contain" }} 
+                                      />
+                                    <h3 className="fw-bold" style={{ color: "#0f172a" }}>Welcome Back</h3>
+                                    <p className="text-muted">Sign in to access CultureConnect</p>
                                 </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label">Password</label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        placeholder="Enter your password"
-                                        required
-                                    />
+                                {error && (
+                                    <div className="alert alert-danger d-flex align-items-center rounded-3 border-0" role="alert" style={{ backgroundColor: "#fef2f2", color: "#b91c1c" }}>
+                                        <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <div>{error}</div>
+                                    </div>
+                                )}
+
+                                <form onSubmit={handleSubmit}>
+                                    <div className="mb-4">
+                                        <label className="form-label fw-medium text-muted small text-uppercase">Email Address</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text bg-light border-end-0 text-muted"><i className="bi bi-envelope"></i></span>
+                                            <input
+                                                type="email"
+                                                className="form-control form-control-lg bg-light border-start-0 ps-0"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                placeholder="Enter your email"
+                                                required
+                                                style={{ boxShadow: "none", borderColor: "#dee2e6" }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <label className="form-label fw-medium text-muted small text-uppercase">Password</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text bg-light border-end-0 text-muted"><i className="bi bi-key"></i></span>
+                                            <input
+                                                type="password"
+                                                className="form-control form-control-lg bg-light border-start-0 ps-0"
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                placeholder="Enter your password"
+                                                required
+                                                style={{ boxShadow: "none", borderColor: "#dee2e6" }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="d-flex justify-content-end mb-4">
+                                        <Link to="/forgot-password" style={{ color: "#3b82f6", textDecoration: "none", fontWeight: "500", fontSize: "0.9rem" }}>
+                                            Forgot Password?
+                                        </Link>
+                                    </div>
+
+                                    <div className="d-grid">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-lg fw-bold rounded-3"
+                                            disabled={loading}
+                                            style={{ backgroundColor: "#fbbf24", color: "#0f172a", border: "none", transition: "all 0.3s ease" }}
+                                        >
+                                            {loading ? (
+                                                <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Authenticating...</>
+                                            ) : (
+                                                "Secure Login"
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div className="text-center mt-4 pt-3 border-top">
+                                    <p className="mb-0 text-muted" style={{ fontSize: "0.95rem" }}>
+                                        New to CultureConnect?{" "}
+                                        <Link to="/register" style={{ color: "#1e293b", fontWeight: "600", textDecoration: "underline" }}>
+                                            Register here
+                                        </Link>
+                                    </p>
                                 </div>
 
-                                <div className="d-flex justify-content-between mb-3">
-                                    <Link to="/forgot-password" className="text-decoration-none">
-                                        Forgot Password?
-                                    </Link>
-                                </div>
-
-                                <div className="d-grid">
-                                    <button
-                                        type="submit"
-                                        className="btn btn-primary btn-lg"
-                                        disabled={loading}
-                                    >
-                                        {loading ? "Signing in..." : "Login"}
-                                    </button>
-                                </div>
-
-                            </form>
-
-                            <hr className="my-4" />
-
-                            <p className="text-center mb-0">
-                                New to CultureConnect?{" "}
-                                <Link to="/register" className="fw-semibold">
-                                    Register here
-                                </Link>
-                            </p>
-
+                            </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
