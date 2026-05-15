@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
 import { getCitizenById, fetchNotifications, markAsRead } from "../citizen.api";
 
@@ -10,19 +9,12 @@ function CitizenNavbar() {
     const [showNotif, setShowNotif] = useState(false);
     const [notifications, setNotifications] = useState([]);
 
-    const navigate = useNavigate();
     const userName = localStorage.getItem("username");
     const citizenId = localStorage.getItem("userId");
 
-    // ✅ ✅ IMPORTANT
     const notifRef = useRef(null);
 
-    const handleLogout = () => {
-        localStorage.clear();
-        navigate("/login");
-    };
-
-    // ✅ LOAD STATUS + NOTIFICATIONS
+    // ✅ LOAD DATA
     useEffect(() => {
         loadStatus();
         loadNotifications();
@@ -52,12 +44,11 @@ function CitizenNavbar() {
         }
     };
 
-    // ✅ CLICK BELL
+    // ✅ Notifications click
     const handleBellClick = async () => {
 
         setShowNotif(prev => !prev);
 
-        // ✅ mark all as read
         notifications.forEach(async (n) => {
             if (n.status === "SENT") {
                 await markAsRead(n.notificationId);
@@ -67,7 +58,7 @@ function CitizenNavbar() {
         loadNotifications();
     };
 
-    // ✅ ✅ OUTSIDE CLICK HANDLER (MAIN FIX)
+    // ✅ Close outside click
     useEffect(() => {
 
         const handleClickOutside = (event) => {
@@ -84,46 +75,62 @@ function CitizenNavbar() {
 
     }, []);
 
-    // ✅ unread count
     const unreadCount = notifications.filter(n => n.status === "SENT").length;
 
     return (
         <>
-            <nav className="navbar navbar-dark bg-dark px-4" 
-style={{
-    position: "sticky",   // ✅ FIX
-    top: 0,               // ✅ stay at top
-    zIndex: 1000          // ✅ stay above content
-  }}
->
+            <nav
+                style={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1000,
+                    background: "#1f232a",
+                    padding: "10px 25px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                }}
+            >
 
-                <span className="navbar-brand fw-bold">
-                    CultureConnect
-                </span>
+                {/* ✅ LEFT EMPTY (NO TITLE NOW) */}
+                <div></div>
 
-                <div className="d-flex align-items-center">
+                {/* ✅ RIGHT SIDE */}
+                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
 
-                    {/* ✅ PROFILE */}
-                    <button
-                        className="btn btn-outline-light me-2"
+                    {/* ✅ USER BOX */}
+                    <div
                         onClick={() => setShowProfile(true)}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            border: "1px solid #444",
+                            padding: "6px 15px",
+                            borderRadius: "10px",
+                            cursor: "pointer",
+                            color: "white"
+                        }}
                     >
-                        <div className="text-start">
-                            <div>👤 {userName}</div>
-                            <small className="text-warning">{status}</small>
-                        </div>
-                    </button>
+                        <span>👤</span>
 
-                    {/* ✅ 🔔 NOTIFICATION */}
+                        <div>
+                            <div>{userName}</div>
+                            <small style={{ color: "#ffc107" }}>{status}</small>
+                        </div>
+                    </div>
+
+                    {/* ✅ NOTIFICATION */}
                     <div className="position-relative" ref={notifRef}>
 
                         <button
-                            className="btn btn-outline-warning me-2"
+                            className="btn btn-outline-warning"
                             onClick={handleBellClick}
                         >
                             🔔
                         </button>
 
+                        {/* ✅ UNREAD COUNT */}
                         {unreadCount > 0 && (
                             <span
                                 className="badge bg-danger position-absolute"
@@ -133,7 +140,7 @@ style={{
                             </span>
                         )}
 
-                        {/* ✅ POPUP */}
+                        {/* ✅ DROP DOWN */}
                         {showNotif && (
                             <div
                                 className="position-absolute bg-white text-dark shadow p-3 rounded"
@@ -160,13 +167,7 @@ style={{
                                 )}
                             </div>
                         )}
-
                     </div>
-
-                    {/* ✅ LOGOUT */}
-                    <button className="btn btn-danger" onClick={handleLogout}>
-                        Logout
-                    </button>
 
                 </div>
             </nav>

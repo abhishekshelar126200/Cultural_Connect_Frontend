@@ -1,38 +1,53 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import "../../style/Managersidebar.css"
 
 export default function ProgramManagerSidebar() {
+
     const navigate = useNavigate();
 
-    const handleLogout = () => {
+    const logout = () => {
         localStorage.clear();
         navigate("/login");
     };
 
     return (
-        <div className="bg-white p-3 border-end" style={{ width: "220px" }}>
-            <h6 className="fw-bold mb-3">
-                {localStorage.getItem("username")}
-            </h6>
+        <div className="manager-sidebar">
 
-            <Link to="/programmanager/dashboard" className="btn btn-success w-100 mb-2">
-                Dashboard
-            </Link>
+            {/* ✅ Logo */}
+            <div className="logo-area">
+                <h4>CultureConnect</h4>
+                <small>MANAGER PORTAL</small>
+            </div>
 
-            <Link to="/programmanager/programs" className="btn btn-outline-secondary w-100 mb-2">
-                Programs
-            </Link>
-            <Link
-                to="/programmanager/applications"
-                className="btn btn-outline-secondary w-100 mb-2"
-            >
-                Applications
-            </Link>
+            {/* ✅ Menu */}
+            <div className="menu">
 
+                <NavLink to="/programmanager/dashboard"
+                    className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}
+                >
+                    📊 Dashboard
+                </NavLink>
 
-            <button className="btn btn-danger w-100 mt-5" onClick={handleLogout}>
-                Logout
-            </button>
+                <NavLink to="/programmanager/programs"
+                    className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}
+                >
+                    📚 Programs
+                </NavLink>
+
+                <NavLink to="/programmanager/applications"
+                    className={({ isActive }) => isActive ? "menu-item active" : "menu-item"}
+                >
+                    📄 Applications
+                </NavLink>
+
+            </div>
+
+            {/* ✅ Logout */}
+            <div className="logout" onClick={logout}>
+                ⏻ Logout
+            </div>
+
         </div>
     );
 }

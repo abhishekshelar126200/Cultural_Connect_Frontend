@@ -1,26 +1,41 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "../CommonComponents/Navbar";
+import Navbar from "../ProgramManagement/components/ManagerNavbar"
 import ProgramManagerSidebar from "../ProgramManagement/components/ProgramManagerSidebar";
 
 function ProgramManagerRoutes() {
+
     return (
-        <div className="min-vh-100 d-flex flex-column">
-            {/* Top Navbar stays static */}
-            <Navbar />
+       <div style={{ display: "flex", height: "100vh" }}>
 
-            <div className="d-flex flex-grow-1">
-                {/* Sidebar stays static on the left */}
-                <ProgramManagerSidebar />
+    {/* ✅ Sidebar */}
+    <ProgramManagerSidebar />
 
-                {/* Content area changes based on route */}
-                <main className="flex-grow-1 bg-light">
-                    <div className="container py-4">
-                        <Outlet />
-                    </div>
-                </main>
-            </div>
+    {/* ✅ Content Area */}
+    <div style={{
+        marginLeft: "260px",   // ✅ VERY IMPORTANT FIX
+        width: "100%",
+        display: "flex",
+        flexDirection: "column"
+    }}>
+
+        {/* ✅ Navbar */}
+        <Navbar />
+
+        {/* ✅ Pages */}
+        <div style={{
+            padding: "25px",
+            background: "#f3f4f6",
+            minHeight: "100vh"
+        }}>
+            <Outlet />
         </div>
+
+    </div>
+
+</div>
+
+
     );
 }
 
