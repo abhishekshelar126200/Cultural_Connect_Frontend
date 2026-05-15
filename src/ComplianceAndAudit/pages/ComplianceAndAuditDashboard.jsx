@@ -1,151 +1,267 @@
-import React, { useState, useEffect } from 'react';
-import { getNewPrograms, createCompliance } from '../compliance.api';
+import React, { useState, useEffect, useCallback } from 'react';
+import { 
+  getNewPrograms, 
+  createCompliance, 
+  getAllCompliance, 
+  deleteCompliance, 
+  updateCompliance 
+} from '../compliance.api';
 
 export default function ComplianceAndAuditDashboard() {
   const [programs, setPrograms] = useState([]);
+  const [complianceRecords, setComplianceRecords] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // New state for dropdown selection
+  // Form State
   const [complianceResult, setComplianceResult] = useState('COMPLIANT');
+  const [complianceNotes, setComplianceNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('new'); 
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentRecordId, setCurrentRecordId] = useState(null);
 
-  const fetchPrograms = async () => {
+  // Wrapped in useCallback to prevent unnecessary re-renders
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getNewPrograms();
-      setPrograms(response.data || []);
       setError(null);
+      const [progRes, compRes] = await Promise.all([
+        getNewPrograms(),
+        getAllCompliance()
+      ]);
+      setPrograms(progRes.data || []);
+      setComplianceRecords(compRes.data || []);
     } catch (err) {
-      console.error("Error fetching programs:", err);
-      setError("Failed to load programs. Please try again later.");
+      setError("Failed to sync with server. Please check connection.");
+      console.error("Fetch Error:", err);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchPrograms();
   }, []);
 
-  const handleViewDetails = (program) => {
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Modal Handlers
+  const openCreateModal = (program) => {
+    setIsEditMode(false);
     setSelectedProgram(program);
-    setComplianceResult('COMPLIANT'); // Reset dropdown when opening modal
+    setComplianceResult('COMPLIANT');
+    setComplianceNotes('');
   };
 
-  const handleCloseModal = () => setSelectedProgram(null);
+  const openEditModal = (record) => {
+    setIsEditMode(true);
+    setCurrentRecordId(record.complianceId);
+    setComplianceNotes(record.notes || '');
+    setComplianceResult(record.result);
+    // Setting selectedProgram so the modal UI has context
+    setSelectedProgram({ 
+        programId: record.entityId, 
+        name: record.entityName || `Record #${record.complianceId}` 
+    });
+  };
 
-  const handleCreateCompliance = async () => {
-    if (!selectedProgram) return;
+  const closeModal = () => {
+    setSelectedProgram(null);
+    setIsEditMode(false);
+    setCurrentRecordId(null);
+    setComplianceNotes('');
+  };
+
+  // API Actions
+  const handleSubmit = async () => {
+    // Validation
+    if (complianceResult === 'NON-COMPLIANT' && !complianceNotes.trim()) {
+      alert("❌ Reason is required for Non-Compliance.");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
-      const complianceData = {
+      const payload = {
         entityId: selectedProgram.programId,
         type: 'PROGRAM',
-        result: complianceResult, // Uses the state from the dropdown
-        notes: `Compliance audit (${complianceResult}) created for ${selectedProgram.name}`,
+        result: complianceResult,
+        notes: complianceNotes,
         date: new Date().toISOString().split('T')[0]
       };
 
-      await createCompliance(complianceData);
-      
-      alert(`✅ Compliance (${complianceResult}) created for: ${selectedProgram.name}`);
-      setSelectedProgram(null);
-      fetchPrograms(); // Refresh list to remove the audited program
+      if (isEditMode) {
+        await updateCompliance(currentRecordId, payload);
+      } else {
+        await createCompliance(payload);
+      }
+
+      alert(isEditMode ? "✅ Record updated!" : "✅ Report submitted!");
+      closeModal();
+      fetchData(); // Refresh lists
     } catch (err) {
-      console.error("Error creating compliance:", err);
-      alert("❌ Failed to create compliance.");
+      alert("❌ Operation failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (loading) return <div className="text-center py-5"><div className="spinner-border text-primary"></div></div>;
+  const handleDelete = async (id) => {
+    if (window.confirm("Permanently delete this record?")) {
+      try {
+        await deleteCompliance(id);
+        setComplianceRecords(prev => prev.filter(r => r.complianceId !== id));
+      } catch (err) {
+        alert("❌ Delete failed.");
+      }
+    }
+  };
+
+  if (loading) return (
+    <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
+      <div className="spinner-grow text-primary" role="status"></div>
+    </div>
+  );
 
   return (
     <div className="container py-4">
-      <h1 className="mb-5 text-center text-primary fw-bold">Compliance & Audit Dashboard</h1>
+      {error && <div className="alert alert-danger">{error}</div>}
+      
+      <header className="mb-4 text-center">
+        <h1 className="display-5 fw-bold text-primary">Compliance & Audit Control</h1>
+        <p className="text-muted">Review internal programs and manage audit history</p>
+      </header>
 
-      <div className="row">
-        {programs.length > 0 ? (
-          programs.map(program => (
-            <div key={program.programId} className="col-md-4 mb-4">
-              <div className="card shadow-lg h-100 border-0">
-                <div className="card-body">
-                  <h5 className="card-title fw-bold">{program.name}</h5>
-                  <p className="card-text text-muted text-truncate">{program.description}</p>
-                  <span className={`badge ${program.status === 'PENDING' ? 'bg-warning text-dark' : 'bg-success'}`}>
-                    {program.status}
-                  </span>
-                </div>
-                <div className="card-footer bg-transparent border-0 text-center">
-                  <button className="btn btn-outline-primary w-100" onClick={() => handleViewDetails(program)}>
-                    View Details
-                  </button>
+      {/* Tabs */}
+      <ul className="nav nav-pills mb-4 justify-content-center">
+        <li className="nav-item">
+          <button 
+            className={`nav-link px-4 ${activeTab === 'new' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('new')}
+          >
+            New Pending ({programs.length})
+          </button>
+        </li>
+        <li className="nav-item ms-2">
+          <button 
+            className={`nav-link px-4 ${activeTab === 'history' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('history')}
+          >
+            Audit History ({complianceRecords.length})
+          </button>
+        </li>
+      </ul>
+
+      {/* Tab Content */}
+      <div className="card shadow-sm border-0 p-4">
+        {activeTab === 'new' ? (
+          <div className="row">
+            {programs.length > 0 ? programs.map(p => (
+              <div key={p.programId} className="col-md-4 mb-3">
+                <div className="card h-100 border-start border-primary border-4 shadow-sm">
+                  <div className="card-body">
+                    <h6 className="fw-bold">{p.name}</h6>
+                    <small className="text-muted d-block mb-3">ID: #{p.programId}</small>
+                    <button className="btn btn-sm btn-primary w-100" onClick={() => openCreateModal(p)}>
+                      Start Audit
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            )) : <div className="text-center py-4">No new programs pending.</div>}
+          </div>
         ) : (
-          <div className="col-12 text-center text-muted">No new programs found for audit.</div>
+          <div className="table-responsive">
+            <table className="table align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>Entity</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Remarks</th>
+                  <th className="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {complianceRecords.length > 0 ? complianceRecords.map(r => (
+                  <tr key={r.complianceId}>
+                    <td>
+                        <strong>#{r.entityId}</strong> 
+                        <span className="badge bg-secondary ms-2">{r.type}</span>
+                    </td>
+                    <td>
+                      <span className={`badge ${r.result === 'COMPLIANT' ? 'bg-success' : 'bg-danger'}`}>
+                        {r.result}
+                      </span>
+                    </td>
+                    <td>{r.date}</td>
+<td style={{ maxWidth: '200px' }}>
+  <div className="text-truncate" title={r.notes}>
+    {r.notes}
+  </div>
+</td>                    <td className="text-end">
+                      <button className="btn btn-sm btn-outline-warning me-2" onClick={() => openEditModal(r)}>Edit</button>
+                      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(r.complianceId)}>Delete</button>
+                    </td>
+                  </tr>
+                )) : <tr><td colSpan="5" className="text-center">No history found.</td></tr>}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
+      {/* Shared Modal */}
       {selectedProgram && (
-        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content border-0 shadow">
-              <div className="modal-header bg-primary text-white">
-                <h5 className="modal-title">Audit: {selectedProgram.name}</h5>
-                <button type="button" className="btn-close btn-close-white" onClick={handleCloseModal}></button>
-              </div>
-              <div className="modal-body">
-                <p className="lead">{selectedProgram.description}</p>
-                <div className="row mb-4">
-                  <div className="col-md-6">
-                    <strong>Timeline:</strong> {selectedProgram.startDate} to {selectedProgram.endDate}
-                  </div>
-                  <div className="col-md-6">
-                    <strong>Budget:</strong> ${selectedProgram.budget?.toLocaleString()}
-                  </div>
+        <>
+          <div className="modal show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content border-0">
+                <div className={`modal-header ${isEditMode ? 'bg-warning text-dark' : 'bg-primary text-white'}`}>
+                  <h5 className="modal-title">{isEditMode ? 'Edit Audit Record' : 'Submit New Audit'}</h5>
+                  <button type="button" className="btn-close" onClick={closeModal}></button>
                 </div>
-
-                <hr />
-                
-                {/* --- DROPDOWN SECTION --- */}
-                <div className="bg-light p-3 rounded">
-                  <label className="form-label fw-bold text-primary">Select Audit Result:</label>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="text-muted small d-block">Target Entity</label>
+                    <span className="fw-bold">{selectedProgram.name}</span>
+                  </div>
+                  
+                  <label className="form-label fw-bold">Compliance Status</label>
                   <select 
-                    className={`form-select fw-bold ${complianceResult === 'COMPLIANT' ? 'text-success' : 'text-danger'}`}
-                    value={complianceResult}
+                    className="form-select mb-3" 
+                    value={complianceResult} 
                     onChange={(e) => setComplianceResult(e.target.value)}
                   >
                     <option value="COMPLIANT">✅ COMPLIANT</option>
                     <option value="NON-COMPLIANT">❌ NON-COMPLIANT</option>
                   </select>
-                  <small className="text-muted mt-2 d-block">
-                    This action will finalize the audit for this program.
-                  </small>
-                </div>
-              </div>
 
-              <div className="modal-footer">
-                <button 
-                  className="btn btn-success fw-bold px-4" 
-                  onClick={handleCreateCompliance}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Processing...' : 'Submit Audit'}
-                </button>
-                <button className="btn btn-secondary" onClick={handleCloseModal} disabled={isSubmitting}>
-                  Cancel
-                </button>
+                  <label className="form-label fw-bold">Officer Remarks</label>
+                  <textarea 
+                    className="form-control" 
+                    rows="4" 
+                    value={complianceNotes}
+                    placeholder="Describe findings..."
+                    onChange={(e) => setComplianceNotes(e.target.value)}
+                  />
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-light" onClick={closeModal}>Cancel</button>
+                  <button 
+                     className={`btn ${complianceResult === 'COMPLIANT' ? 'btn-success' : 'btn-danger'}`} 
+                     onClick={handleSubmit}
+                     disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Processing...' : (isEditMode ? 'Update Record' : 'Submit to Auditor')}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          {/* Backdrop for accessibility */}
+          <div className="modal-backdrop fade show"></div>
+        </>
       )}
     </div>
   );

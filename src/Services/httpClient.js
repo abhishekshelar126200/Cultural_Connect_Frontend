@@ -139,6 +139,3 @@ export {
     httpAdminlogClient,
     httpNotificationClient
 };
-    httpNotificationClient,
-    httpAuditClient
-}
